@@ -1,0 +1,98 @@
+{
+  "author": "karol-brejna-i",
+  "base_ref": "main",
+  "events": [
+    {
+      "actor": "karol-brejna-i",
+      "at": "2026-07-28T17:33:52Z",
+      "id": "created:PR_kwDOKo_lrs73lWUa",
+      "type": "created"
+    },
+    {
+      "actor": "karol-brejna-i",
+      "at": "2026-08-03T11:51:52Z",
+      "id": "RFRE_lADOKo_lrs8AAAABKhrdKc8AAAAGubOpLA",
+      "type": "ready_for_review"
+    },
+    {
+      "actor": "karol-brejna-i",
+      "at": "2026-08-03T11:51:53Z",
+      "id": "RRE_lADOKo_lrs8AAAABKhrdKc8AAAAGubOr3g",
+      "type": "review_requested"
+    },
+    {
+      "actor": "karol-brejna-i",
+      "at": "2026-08-03T11:51:53Z",
+      "id": "RRE_lADOKo_lrs8AAAABKhrdKc8AAAAGubOrcg",
+      "type": "review_requested"
+    },
+    {
+      "actor": "karol-brejna-i",
+      "at": "2026-08-03T11:51:53Z",
+      "id": "RRE_lADOKo_lrs8AAAABKhrdKc8AAAAGubOsGg",
+      "type": "review_requested"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-08-04T06:43:46Z",
+      "id": "PRR_kwDOKo_lrs8AAAABISoYcA",
+      "review_state": "COMMENTED",
+      "type": "review"
+    }
+  ],
+  "history_runs": 3,
+  "in_watchlist": true,
+  "key": "pytorch/ao#4628",
+  "last_error": null,
+  "metrics": {
+    "changes_requested_count": 0,
+    "distinct_reviewers": 1,
+    "hours_created_to_ready": 138.3,
+    "hours_draft_total": 138.3,
+    "open_hours": 1235.09,
+    "ready_hours_internal_to_external_approval": null,
+    "ready_hours_to_external_approval": null,
+    "ready_hours_to_external_review": null,
+    "ready_hours_to_first_review": 18.86,
+    "ready_hours_to_internal_approval": null,
+    "ready_hours_to_internal_review": null,
+    "review_rounds": 0,
+    "wall_hours_to_merge": null
+  },
+  "milestones": {
+    "approval_path": "none",
+    "closed_at": null,
+    "created_at": "2026-07-28T17:33:52Z",
+    "draft_at_creation": true,
+    "draft_intervals": [
+      [
+        "2026-07-28T17:33:52Z",
+        "2026-08-03T11:51:52Z"
+      ]
+    ],
+    "external_approved_at": null,
+    "first_changes_requested_at": null,
+    "first_external_review_at": null,
+    "first_internal_review_at": null,
+    "first_review_at": "2026-08-04T06:43:46Z",
+    "internal_approved_at": null,
+    "merged_at": null,
+    "other_approved_at": null,
+    "ready_at": "2026-08-03T11:51:52Z"
+  },
+  "number": 4628,
+  "owner": "pytorch",
+  "repo": "ao",
+  "schema_version": 1,
+  "snapshot": {
+    "additions": 5,
+    "changed_files": 1,
+    "deletions": 2,
+    "fetched_at": "2026-09-18T04:39:02Z",
+    "is_draft": false,
+    "state": "OPEN"
+  },
+  "title": "[xpu][test] Use device-agnostic device list in test_quantized_training",
+  "tracking": "active",
+  "url": "https://github.com/pytorch/ao/pull/4628"
+}

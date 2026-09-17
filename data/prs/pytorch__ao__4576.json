@@ -1,0 +1,97 @@
+{
+  "author": "karol-brejna-i",
+  "base_ref": "main",
+  "events": [
+    {
+      "actor": "karol-brejna-i",
+      "at": "2026-07-16T06:55:29Z",
+      "id": "created:PR_kwDOKo_lrs7yYTC7",
+      "type": "created"
+    },
+    {
+      "actor": "karol-brejna-i",
+      "at": "2026-07-16T19:56:06Z",
+      "id": "RFRE_lADOKo_lrs8AAAABJAkSVc8AAAAGikCucw",
+      "type": "ready_for_review"
+    },
+    {
+      "actor": "karol-brejna-i",
+      "at": "2026-07-16T19:56:07Z",
+      "id": "RRE_lADOKo_lrs8AAAABJAkSVc8AAAAGikCv7w",
+      "type": "review_requested"
+    },
+    {
+      "actor": "karol-brejna-i",
+      "at": "2026-07-16T19:56:07Z",
+      "id": "RRE_lADOKo_lrs8AAAABJAkSVc8AAAAGikCvow",
+      "type": "review_requested"
+    },
+    {
+      "actor": "karol-brejna-i",
+      "at": "2026-07-31T06:17:39Z",
+      "id": "RRE_lADOKo_lrs8AAAABJAkSVc8AAAAGslNsTA",
+      "type": "review_requested"
+    },
+    {
+      "actor": "karol-brejna-i",
+      "at": "2026-08-20T15:21:31Z",
+      "id": "RRE_lADOKo_lrs8AAAABJAkSVc8AAAAG7WKsBQ",
+      "type": "review_requested"
+    }
+  ],
+  "history_runs": 3,
+  "in_watchlist": true,
+  "key": "pytorch/ao#4576",
+  "last_error": null,
+  "metrics": {
+    "changes_requested_count": 0,
+    "distinct_reviewers": 0,
+    "hours_created_to_ready": 13.01,
+    "hours_draft_total": 13.01,
+    "open_hours": 1533.73,
+    "ready_hours_internal_to_external_approval": null,
+    "ready_hours_to_external_approval": null,
+    "ready_hours_to_external_review": null,
+    "ready_hours_to_first_review": null,
+    "ready_hours_to_internal_approval": null,
+    "ready_hours_to_internal_review": null,
+    "review_rounds": 0,
+    "wall_hours_to_merge": null
+  },
+  "milestones": {
+    "approval_path": "none",
+    "closed_at": null,
+    "created_at": "2026-07-16T06:55:29Z",
+    "draft_at_creation": true,
+    "draft_intervals": [
+      [
+        "2026-07-16T06:55:29Z",
+        "2026-07-16T19:56:06Z"
+      ]
+    ],
+    "external_approved_at": null,
+    "first_changes_requested_at": null,
+    "first_external_review_at": null,
+    "first_internal_review_at": null,
+    "first_review_at": null,
+    "internal_approved_at": null,
+    "merged_at": null,
+    "other_approved_at": null,
+    "ready_at": "2026-07-16T19:56:06Z"
+  },
+  "number": 4576,
+  "owner": "pytorch",
+  "repo": "ao",
+  "schema_version": 1,
+  "snapshot": {
+    "additions": 2,
+    "changed_files": 2,
+    "deletions": 1,
+    "fetched_at": "2026-09-18T04:39:02Z",
+    "is_draft": false,
+    "state": "OPEN"
+  },
+  "title": "[xpu][test] Relax test_bf16_stochastic_round tolerance",
+  "tracking": "active",
+  "url": "https://github.com/pytorch/ao/pull/4576"
+}
