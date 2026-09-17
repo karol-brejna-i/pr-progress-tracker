@@ -1,0 +1,105 @@
+{
+  "author": "karol-brejna-i",
+  "base_ref": "main",
+  "events": [
+    {
+      "actor": "karol-brejna-i",
+      "at": "2026-07-30T17:01:03Z",
+      "id": "created:PR_kwDOKo_lrs74oqdm",
+      "type": "created"
+    },
+    {
+      "actor": "karol-brejna-i",
+      "at": "2026-07-31T10:28:57Z",
+      "id": "RFRE_lADOKo_lrs8AAAABK1fU-c8AAAAGsulzCw",
+      "type": "ready_for_review"
+    },
+    {
+      "actor": "karol-brejna-i",
+      "at": "2026-07-31T10:28:57Z",
+      "id": "RRE_lADOKo_lrs8AAAABK1fU-c8AAAAGsul1JQ",
+      "type": "review_requested"
+    },
+    {
+      "actor": "karol-brejna-i",
+      "at": "2026-07-31T10:28:58Z",
+      "id": "RRE_lADOKo_lrs8AAAABK1fU-c8AAAAGsul1jA",
+      "type": "review_requested"
+    },
+    {
+      "actor": "karol-brejna-i",
+      "at": "2026-07-31T10:28:58Z",
+      "id": "RRE_lADOKo_lrs8AAAABK1fU-c8AAAAGsul1uw",
+      "type": "review_requested"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-08-04T07:04:21Z",
+      "id": "PRR_kwDOKo_lrs8AAAABISx_Wg",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-08-04T07:04:31Z",
+      "id": "PRR_kwDOKo_lrs8AAAABISyEYw",
+      "review_state": "COMMENTED",
+      "type": "review"
+    }
+  ],
+  "history_runs": 1,
+  "in_watchlist": true,
+  "key": "pytorch/ao#4660",
+  "last_error": null,
+  "metrics": {
+    "changes_requested_count": 0,
+    "distinct_reviewers": 1,
+    "hours_created_to_ready": 17.46,
+    "hours_draft_total": 17.46,
+    "open_hours": 1177.95,
+    "ready_hours_internal_to_external_approval": null,
+    "ready_hours_to_external_approval": null,
+    "ready_hours_to_external_review": null,
+    "ready_hours_to_first_review": 92.59,
+    "ready_hours_to_internal_approval": null,
+    "ready_hours_to_internal_review": null,
+    "review_rounds": 0,
+    "wall_hours_to_merge": null
+  },
+  "milestones": {
+    "approval_path": "none",
+    "closed_at": null,
+    "created_at": "2026-07-30T17:01:03Z",
+    "draft_at_creation": true,
+    "draft_intervals": [
+      [
+        "2026-07-30T17:01:03Z",
+        "2026-07-31T10:28:57Z"
+      ]
+    ],
+    "external_approved_at": null,
+    "first_changes_requested_at": null,
+    "first_external_review_at": null,
+    "first_internal_review_at": null,
+    "first_review_at": "2026-08-04T07:04:21Z",
+    "internal_approved_at": null,
+    "merged_at": null,
+    "other_approved_at": null,
+    "ready_at": "2026-07-31T10:28:57Z"
+  },
+  "number": 4660,
+  "owner": "pytorch",
+  "repo": "ao",
+  "schema_version": 1,
+  "snapshot": {
+    "additions": 2,
+    "changed_files": 1,
+    "deletions": 2,
+    "fetched_at": "2026-09-17T18:58:12Z",
+    "is_draft": false,
+    "state": "OPEN"
+  },
+  "title": "[test] Fix dead device comparison that disabled the SM80 bfloat16 skip in test/integration/test_integration.py",
+  "tracking": "active",
+  "url": "https://github.com/pytorch/ao/pull/4660"
+}
