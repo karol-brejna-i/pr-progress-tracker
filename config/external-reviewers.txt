@@ -1,0 +1,9 @@
+# GitHub logins whose APPROVED review satisfies the "externally approved" milestone.
+# One login per line; case-insensitive; a leading @ is stripped.
+#
+# Approvals by logins in NEITHER list are classified "other": they are recorded and shown
+# as an informational column, but satisfy neither approval milestone.
+#
+# SAMPLE DATA — replace with your actual external reviewers.
+
+liangan1

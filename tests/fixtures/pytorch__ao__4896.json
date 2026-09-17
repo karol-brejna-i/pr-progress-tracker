@@ -1,0 +1,99 @@
+{
+  "data": {
+    "rateLimit": {
+      "cost": 1,
+      "remaining": 4967,
+      "resetAt": "2026-09-17T17:21:47Z"
+    },
+    "repository": {
+      "pullRequest": {
+        "id": "PR_kwDOKo_lrs8AAAABDg-bRA",
+        "number": 4896,
+        "title": "[ROCm][CI] Update ROCm version to 10.0",
+        "url": "https://github.com/pytorch/ao/pull/4896",
+        "state": "MERGED",
+        "isDraft": false,
+        "createdAt": "2026-09-14T21:12:13Z",
+        "closedAt": "2026-09-16T16:42:00Z",
+        "mergedAt": "2026-09-16T16:42:00Z",
+        "author": {
+          "login": "akashveramd"
+        },
+        "baseRefName": "main",
+        "additions": 6,
+        "deletions": 6,
+        "changedFiles": 2,
+        "timelineItems": {
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpPPAAABoKsYu8ABqzMxMjYwOTkwODE4"
+          },
+          "nodes": [
+            {
+              "__typename": "ReviewRequestedEvent",
+              "id": "RRE_lADOKo_lrs8AAAABRR975M8AAAAHP4wVjg",
+              "createdAt": "2026-09-14T21:12:14Z",
+              "actor": {
+                "login": "akashveramd"
+              },
+              "requestedReviewer": {
+                "__typename": "User",
+                "login": "jerryzh168"
+              }
+            },
+            {
+              "__typename": "ReviewRequestedEvent",
+              "id": "RRE_lADOKo_lrs8AAAABRR975M8AAAAHP4wV0w",
+              "createdAt": "2026-09-14T21:12:14Z",
+              "actor": {
+                "login": "akashveramd"
+              },
+              "requestedReviewer": {
+                "__typename": "User",
+                "login": "vkuzo"
+              }
+            },
+            {
+              "__typename": "ReviewRequestedEvent",
+              "id": "RRE_lADOKo_lrs8AAAABRR975M8AAAAHP4wWEQ",
+              "createdAt": "2026-09-14T21:12:14Z",
+              "actor": {
+                "login": "akashveramd"
+              },
+              "requestedReviewer": {
+                "__typename": "User",
+                "login": "andrewor14"
+              }
+            },
+            {
+              "__typename": "PullRequestReview",
+              "id": "PRR_kwDOKo_lrs8AAAABN3e2Pg",
+              "createdAt": "2026-09-16T16:41:52Z",
+              "submittedAt": "2026-09-16T16:41:52Z",
+              "state": "APPROVED",
+              "author": {
+                "login": "vkuzo"
+              }
+            },
+            {
+              "__typename": "MergedEvent",
+              "id": "ME_lADOKo_lrs8AAAABRR975M8AAAAHR0zdAg",
+              "createdAt": "2026-09-16T16:42:00Z",
+              "actor": {
+                "login": "vkuzo"
+              }
+            },
+            {
+              "__typename": "ClosedEvent",
+              "id": "CE_lADOKo_lrs8AAAABRR975M8AAAAHR0zdYg",
+              "createdAt": "2026-09-16T16:42:00Z",
+              "actor": {
+                "login": "vkuzo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

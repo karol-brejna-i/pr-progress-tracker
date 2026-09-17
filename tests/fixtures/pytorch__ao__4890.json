@@ -1,0 +1,83 @@
+{
+  "data": {
+    "rateLimit": {
+      "cost": 1,
+      "remaining": 4966,
+      "resetAt": "2026-09-17T17:21:47Z"
+    },
+    "repository": {
+      "pullRequest": {
+        "id": "PR_kwDOKo_lrs8AAAABDLyz7w",
+        "number": 4890,
+        "title": "[a16-support] Document repeatable static A16W4 QAT workflow",
+        "url": "https://github.com/pytorch/ao/pull/4890",
+        "state": "OPEN",
+        "isDraft": false,
+        "createdAt": "2026-09-11T18:22:05Z",
+        "closedAt": null,
+        "mergedAt": null,
+        "author": {
+          "login": "insoochung"
+        },
+        "baseRefName": "gh/insoochung/8/base",
+        "additions": 218,
+        "deletions": 0,
+        "changedFiles": 2,
+        "timelineItems": {
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpPPAAABoKwi5HgFqjUyMjg1ODEyOTU="
+          },
+          "nodes": [
+            {
+              "__typename": "ReviewRequestedEvent",
+              "id": "RRE_lADOKo_lrs8AAAABQ4OzAM8AAAAHNz-EtQ",
+              "createdAt": "2026-09-11T18:22:06Z",
+              "actor": {
+                "login": "insoochung"
+              },
+              "requestedReviewer": {
+                "__typename": "User",
+                "login": "vkuzo"
+              }
+            },
+            {
+              "__typename": "ReviewRequestedEvent",
+              "id": "RRE_lADOKo_lrs8AAAABQ4OzAM8AAAAHNz-E8Q",
+              "createdAt": "2026-09-11T18:22:06Z",
+              "actor": {
+                "login": "insoochung"
+              },
+              "requestedReviewer": {
+                "__typename": "User",
+                "login": "jerryzh168"
+              }
+            },
+            {
+              "__typename": "ReviewRequestedEvent",
+              "id": "RRE_lADOKo_lrs8AAAABQ4OzAM8AAAAHNz-FMg",
+              "createdAt": "2026-09-11T18:22:06Z",
+              "actor": {
+                "login": "insoochung"
+              },
+              "requestedReviewer": {
+                "__typename": "User",
+                "login": "andrewor14"
+              }
+            },
+            {
+              "__typename": "PullRequestReview",
+              "id": "PRR_kwDOKo_lrs8AAAABN6XRrw",
+              "createdAt": "2026-09-16T21:32:37Z",
+              "submittedAt": "2026-09-16T21:32:43Z",
+              "state": "CHANGES_REQUESTED",
+              "author": {
+                "login": "andrewor14"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "data": {
+    "rateLimit": {
+      "cost": 1,
+      "remaining": 4968,
+      "resetAt": "2026-09-17T17:21:47Z"
+    },
+    "repository": {
+      "pullRequest": {
+        "id": "PR_kwDOKo_lrs8AAAABDbBZ6A",
+        "number": 4893,
+        "title": "Enable  JSON serialization/deserialization of pybind11-backed enums (e.g. `torch.nn.functional.SwizzleType`)",
+        "url": "https://github.com/pytorch/ao/pull/4893",
+        "state": "MERGED",
+        "isDraft": false,
+        "createdAt": "2026-09-14T08:55:08Z",
+        "closedAt": "2026-09-16T16:43:20Z",
+        "mergedAt": "2026-09-16T16:43:20Z",
+        "author": {
+          "login": "xiaowangintel"
+        },
+        "baseRefName": "main",
+        "additions": 59,
+        "deletions": 3,
+        "changedFiles": 2,
+        "timelineItems": {
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpPPAAABoKsZ9EABqzMxMjYxMDc1MzEy"
+          },
+          "nodes": [
+            {
+              "__typename": "ReviewRequestedEvent",
+              "id": "RRE_lADOKo_lrs8AAAABRK73aM8AAAAHPQNSEQ",
+              "createdAt": "2026-09-14T08:55:09Z",
+              "actor": {
+                "login": "xiaowangintel"
+              },
+              "requestedReviewer": {
+                "__typename": "User",
+                "login": "jerryzh168"
+              }
+            },
+            {
+              "__typename": "ReviewRequestedEvent",
+              "id": "RRE_lADOKo_lrs8AAAABRK73aM8AAAAHPQNSdg",
+              "createdAt": "2026-09-14T08:55:09Z",
+              "actor": {
+                "login": "xiaowangintel"
+              },
+              "requestedReviewer": {
+                "__typename": "User",
+                "login": "vkuzo"
+              }
+            },
+            {
+              "__typename": "ReviewRequestedEvent",
+              "id": "RRE_lADOKo_lrs8AAAABRK73aM8AAAAHPQNSwQ",
+              "createdAt": "2026-09-14T08:55:09Z",
+              "actor": {
+                "login": "xiaowangintel"
+              },
+              "requestedReviewer": {
+                "__typename": "User",
+                "login": "andrewor14"
+              }
+            },
+            {
+              "__typename": "ConvertToDraftEvent",
+              "id": "CTDE_lADOKo_lrs8AAAABRK73aM8AAAAHPQNqxQ",
+              "createdAt": "2026-09-14T08:55:16Z",
+              "actor": {
+                "login": "xiaowangintel"
+              }
+            },
+            {
+              "__typename": "ReadyForReviewEvent",
+              "id": "RFRE_lADOKo_lrs8AAAABRK73aM8AAAAHQRhntg",
+              "createdAt": "2026-09-15T08:02:46Z",
+              "actor": {
+                "login": "xiaowangintel"
+              }
+            },
+            {
+              "__typename": "ReviewRequestedEvent",
+              "id": "RRE_lADOKo_lrs8AAAABRK73aM8AAAAHQS-BaQ",
+              "createdAt": "2026-09-15T08:29:01Z",
+              "actor": {
+                "login": "xiaowangintel"
+              },
+              "requestedReviewer": {
+                "__typename": "User",
+                "login": "liangan1"
+              }
+            },
+            {
+              "__typename": "PullRequestReview",
+              "id": "PRR_kwDOKo_lrs8AAAABNw0iDw",
+              "createdAt": "2026-09-16T04:42:16Z",
+              "submittedAt": "2026-09-16T04:42:16Z",
+              "state": "APPROVED",
+              "author": {
+                "login": "liangan1"
+              }
+            },
+            {
+              "__typename": "PullRequestReview",
+              "id": "PRR_kwDOKo_lrs8AAAABN3fqFw",
+              "createdAt": "2026-09-16T16:43:08Z",
+              "submittedAt": "2026-09-16T16:43:08Z",
+              "state": "APPROVED",
+              "author": {
+                "login": "vkuzo"
+              }
+            },
+            {
+              "__typename": "MergedEvent",
+              "id": "ME_lADOKo_lrs8AAAABRK73aM8AAAAHR04nAQ",
+              "createdAt": "2026-09-16T16:43:20Z",
+              "actor": {
+                "login": "vkuzo"
+              }
+            },
+            {
+              "__typename": "ClosedEvent",
+              "id": "CE_lADOKo_lrs8AAAABRK73aM8AAAAHR04ncA",
+              "createdAt": "2026-09-16T16:43:20Z",
+              "actor": {
+                "login": "vkuzo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

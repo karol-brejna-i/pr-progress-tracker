@@ -1,0 +1,36 @@
+{
+  "data": {
+    "rateLimit": {
+      "cost": 1,
+      "remaining": 4965,
+      "resetAt": "2026-09-17T17:21:47Z"
+    },
+    "repository": {
+      "pullRequest": {
+        "id": "PR_kwDOKo_lrs8AAAABD9gzLw",
+        "number": 4908,
+        "title": "Use the global DTensor size when selecting AdamW8bit state precision",
+        "url": "https://github.com/pytorch/ao/pull/4908",
+        "state": "OPEN",
+        "isDraft": true,
+        "createdAt": "2026-09-17T16:35:46Z",
+        "closedAt": null,
+        "mergedAt": null,
+        "author": {
+          "login": "gss10282025"
+        },
+        "baseRefName": "main",
+        "additions": 18,
+        "deletions": 3,
+        "changedFiles": 1,
+        "timelineItems": {
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": null
+          },
+          "nodes": []
+        }
+      }
+    }
+  }
+}

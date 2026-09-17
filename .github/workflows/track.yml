@@ -1,0 +1,59 @@
+name: Track PR progress
+
+on:
+  schedule:
+    # Every 3 hours, off the hour. Metric accuracy does not depend on cadence: all
+    # timestamps come from GitHub's own event data, so a delayed run only delays the
+    # report, it does not distort the numbers.
+    - cron: "17 */3 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Re-fetch PRs already marked final (merged/closed)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  # Runs commit to the repo, so they must not overlap. Never cancel in progress: a
+  # half-finished run that already wrote some records should be allowed to finish.
+  group: pr-tracker
+  cancel-in-progress: false
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # No dependency install: runtime code is stdlib-only by design.
+      - name: Fetch and derive
+        env:
+          GH_TRACKER_TOKEN: ${{ secrets.GH_TRACKER_TOKEN }}
+          PYTHONPATH: src
+        run: python -m pr_tracker track ${{ inputs.force && '--force' || '' }}
+
+      - name: Render report
+        env:
+          PYTHONPATH: src
+        run: python -m pr_tracker report
+
+      - name: Commit data and report
+        run: |
+          git config user.name "pr-progress-tracker[bot]"
+          git config user.email "pr-progress-tracker@users.noreply.github.com"
+          git add data reports
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "chore(data): update PR progress [skip ci]"
+          # Another run (or a human) may have pushed since checkout.
+          git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

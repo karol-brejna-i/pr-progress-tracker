@@ -1,0 +1,5 @@
+{
+  "stale_review_hours": 48,
+  "stale_merge_hours": 72,
+  "percentiles": [50, 90]
+}

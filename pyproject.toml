@@ -1,0 +1,22 @@
+[project]
+name = "pr-progress-tracker"
+version = "0.1.0"
+description = "Track GitHub PR lifecycle milestones and review latency"
+requires-python = ">=3.12"
+# Intentionally empty and intended to stay that way: `track` and `report` must run on a
+# bare python3 with no install step. See AGENTS.md.
+dependencies = []
+
+[dependency-groups]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

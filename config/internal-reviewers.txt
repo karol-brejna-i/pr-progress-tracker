@@ -1,0 +1,10 @@
+# GitHub logins whose APPROVED review satisfies the "internally approved" milestone.
+# One login per line; case-insensitive; a leading @ is stripped.
+# A login must not appear in both this file and external-reviewers.txt (that fails the run).
+#
+# SAMPLE DATA — replace with your actual internal reviewers. These three are simply the
+# approvers observed on the sample pytorch/ao PRs above, so the first report has something
+# to show; they are not a real internal/external split.
+
+vkuzo
+andrewor14
