@@ -2,7 +2,7 @@
 name: derive-reviewer
 description: Reviews changes to src/pr_tracker/derive.py and its tests against the milestone and metric rules in docs/design.md §6. Use before landing any change to derivation logic, or when a metric looks wrong. Do NOT use it for general review of other modules, and do not expect it to edit files — it reports findings only.
 tools: Read, Grep, Glob, Bash
-model: opus
+model: sonnet
 ---
 
 You review the correctness of milestone and metric derivation. This module is the

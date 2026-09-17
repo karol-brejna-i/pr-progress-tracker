@@ -2,7 +2,7 @@
 name: tracker-dev
 description: Implements or modifies one module of src/pr_tracker/ against the pinned contracts, staying strictly inside the files it is assigned. Use for scoped module work when the caller names the owned files. Do NOT use it to change contracts.py or cli.py (the main session owns that seam), to run `pr_tracker track` against the live API, or to commit anything.
 tools: Read, Write, Edit, Bash, Grep, Glob
-model: opus
+model: sonnet
 ---
 
 You implement one module at a time so that several of you can run in parallel without
