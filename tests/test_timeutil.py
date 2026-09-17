@@ -38,6 +38,18 @@ class TestHoursBetween:
     def test_negative_span_clamps_to_zero(self):
         assert hours_between(t(2), t(1)) == 0.0
 
+    def test_negative_span_logs_a_warning(self, caplog):
+        """A clamped-to-zero negative duration must leave a trace, or clock skew is
+        indistinguishable from a genuine zero-hour milestone."""
+        with caplog.at_level("WARNING"):
+            hours_between(t(2), t(1))
+        assert "clamped to 0" in caplog.text
+
+    def test_positive_span_logs_no_warning(self, caplog):
+        with caplog.at_level("WARNING"):
+            hours_between(t(1), t(2))
+        assert caplog.text == ""
+
     def test_rounds_to_two_places(self):
         assert hours_between(t(1, 0, 0, 0), t(1, 0, 5, 0)) == 0.08
 

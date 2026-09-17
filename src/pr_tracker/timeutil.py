@@ -8,7 +8,10 @@ how you silently report zero draft time for a PR that sat in draft for a day.
 
 from __future__ import annotations
 
+import logging
 from datetime import UTC, datetime
+
+logger = logging.getLogger(__name__)
 
 # An interval whose end may be None, meaning "still open at time of observation".
 Interval = tuple[datetime, datetime | None]
@@ -29,12 +32,16 @@ def format_ts(value: datetime) -> str:
 
 
 def hours(seconds: float) -> float:
-    """Seconds to hours, rounded to 2dp, clamped at zero."""
+    """Seconds to hours, rounded to 2dp, clamped at zero. Logs when the clamp actually fires."""
+    if seconds < 0:
+        logger.warning(
+            "negative duration %.2fs clamped to 0 (clock skew or out-of-order data?)", seconds
+        )
     return round(max(seconds, 0.0) / 3600.0, 2)
 
 
 def hours_between(start: datetime, end: datetime) -> float:
-    """Wall-clock hours from start to end. Negative spans clamp to 0.0.
+    """Wall-clock hours from start to end. Negative spans clamp to 0.0 and are logged.
 
     Clock skew and out-of-order event data do occur; a clamped zero is wrong in a visible
     way, whereas a negative duration corrupts every aggregate downstream.

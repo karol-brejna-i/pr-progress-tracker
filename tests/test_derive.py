@@ -114,6 +114,26 @@ class TestCreatedAsDraft:
         assert mx.open_hours == 240.0
         assert ms.merged_at is None and ms.closed_at is None
 
+    def test_closed_while_still_draft_stops_accruing_at_close(self):
+        """Regression: an open draft interval must close at closed_at, not at `now` — a PR
+        that has stopped existing cannot keep accumulating draft hours against the clock."""
+        events = [created_event(), Event(id="c", type="closed", at=t(12), actor="alice")]
+        ms, mx = derive(events, snap("CLOSED", is_draft=True), CFG, NOW)
+
+        assert ms.draft_intervals == [(CREATED, None)]
+        assert ms.closed_at == t(12)
+        # NOW is 240h after CREATED; if the bug were still present this would be 240.0.
+        assert mx.hours_draft_total == 12.0
+        assert mx.open_hours == 12.0
+
+    def test_merged_while_still_draft_stops_accruing_at_merge(self):
+        events = [created_event(), Event(id="m", type="merged", at=t(8), actor="alice")]
+        ms, mx = derive(events, snap("MERGED", is_draft=True), CFG, NOW)
+
+        assert ms.merged_at == t(8)
+        assert mx.hours_draft_total == 8.0
+        assert mx.open_hours == 8.0
+
 
 class TestPytorchAo4893RoundTrip:
     """Created ready, converted to draft 8s later, readied ~23h after, approved next day.
@@ -409,3 +429,34 @@ class TestDefensiveCases:
         assert ms.ready_at == NOW
         assert mx.open_hours == 0.0
         assert mx.hours_draft_total == 0.0
+
+    def test_merged_state_without_a_merged_event_logs_a_warning(self, caplog):
+        """A truncated timeline (missing page, lost event) must not fail silently."""
+        events = [created_event()]
+        with caplog.at_level("WARNING"):
+            ms, _ = derive(events, snap("MERGED"), CFG, NOW)
+        assert ms.merged_at is None
+        assert "no 'merged' event" in caplog.text
+
+    def test_closed_state_without_a_closed_event_logs_a_warning(self, caplog):
+        events = [created_event()]
+        with caplog.at_level("WARNING"):
+            ms, _ = derive(events, snap("CLOSED"), CFG, NOW)
+        assert ms.closed_at is None
+        assert "no 'closed' event" in caplog.text
+
+    def test_replay_state_disagreeing_with_snapshot_logs_a_warning(self, caplog):
+        """A lost ConvertToDraftEvent leaves the replay ending "not in draft" while the
+        snapshot says otherwise — the invariant _draft_intervals's docstring promises."""
+        events = [
+            created_event(),
+            Event(id="rfr", type="ready_for_review", at=t(2), actor="alice"),
+        ]
+        with caplog.at_level("WARNING"):
+            derive(events, snap(is_draft=True), CFG, NOW)
+        assert "draft state mismatch" in caplog.text
+
+    def test_consistent_draft_state_logs_no_warning(self, caplog):
+        with caplog.at_level("WARNING"):
+            derive([created_event()], snap(is_draft=False), CFG, NOW)
+        assert caplog.text == ""

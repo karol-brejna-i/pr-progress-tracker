@@ -18,10 +18,13 @@ yields the same numbers.
 
 from __future__ import annotations
 
+import logging
 from datetime import datetime
 
 from .contracts import DRAFT_TRANSITIONS, Config, Event, Metrics, Milestones, Snapshot
 from .timeutil import Interval, close_intervals, hours, hours_between, hours_excluding
+
+logger = logging.getLogger(__name__)
 
 # Reviews that count as a "round" of review. A COMMENTED review is a drive-by note (and the
 # state GitHub gives a review that only carries inline comments), so counting it would inflate
@@ -49,6 +52,19 @@ def derive(
     draft_intervals = _draft_intervals(ordered, created_at, draft_at_creation)
     ready_at = _ready_at(ordered, created_at, draft_at_creation)
 
+    # The replay's end state should always agree with the snapshot's current is_draft — that
+    # invariant is the only thing standing between a truncated/lost event and a silently wrong
+    # draft_intervals. A mismatch means the timeline is incomplete or out of sync; log it
+    # rather than let it pass as a real 0.0 or an interval that never closes.
+    ends_in_draft = bool(draft_intervals) and draft_intervals[-1][1] is None
+    if ends_in_draft != snapshot.is_draft:
+        logger.warning(
+            "draft state mismatch: replay ends %s but snapshot.is_draft=%s "
+            "(incomplete or out-of-order timeline?)",
+            "in draft" if ends_in_draft else "not in draft",
+            snapshot.is_draft,
+        )
+
     reviews = [e for e in ordered if e.type == "review"]
     first_review_at = reviews[0].at if reviews else None
     first_changes_requested_at = next(
@@ -57,6 +73,9 @@ def derive(
     approvals = _earliest_approvals(reviews, cfg)
 
     merged_at, closed_at = _terminal_timestamps(ordered, snapshot)
+    # A PR that is closed/merged has stopped existing; an open-ended draft interval must
+    # close at that moment, not keep accruing draft hours against a clock that has moved on.
+    as_of = merged_at or closed_at or now
 
     milestones = Milestones(
         created_at=created_at,
@@ -73,7 +92,7 @@ def derive(
     )
 
     metrics = Metrics(
-        hours_draft_total=_hours_draft_total(draft_intervals, now),
+        hours_draft_total=_hours_draft_total(draft_intervals, as_of),
         hours_created_to_ready=(None if ready_at is None else hours_between(created_at, ready_at)),
         ready_hours_to_first_review=_ready_hours(ready_at, first_review_at, draft_intervals, now),
         ready_hours_to_internal_approval=_ready_hours(
@@ -86,7 +105,7 @@ def derive(
         changes_requested_count=sum(1 for e in reviews if e.review_state == "CHANGES_REQUESTED"),
         review_rounds=sum(1 for e in reviews if e.review_state in _ROUND_STATES),
         distinct_reviewers=len({e.actor for e in reviews if e.actor}),
-        open_hours=hours_between(created_at, merged_at or closed_at or now),
+        open_hours=hours_between(created_at, as_of),
     )
     return milestones, metrics
 
@@ -174,16 +193,26 @@ def _terminal_timestamps(
     """
     if snapshot.state == "MERGED":
         merged = [e.at for e in ordered if e.type == "merged"]
+        if not merged:
+            logger.warning("snapshot.state=MERGED but no 'merged' event in the timeline")
         return (merged[-1] if merged else None), None
     if snapshot.state == "CLOSED":
         closed = [e.at for e in ordered if e.type == "closed"]
+        if not closed:
+            logger.warning("snapshot.state=CLOSED but no 'closed' event in the timeline")
         return None, (closed[-1] if closed else None)
     return None, None
 
 
-def _hours_draft_total(draft_intervals: list[Interval], now: datetime) -> float:
-    """Total draft hours, open intervals closed at `now`. Never a draft is a real 0.0."""
-    closed = close_intervals(draft_intervals, now)
+def _hours_draft_total(draft_intervals: list[Interval], as_of: datetime) -> float:
+    """Total draft hours, open intervals closed at `as_of`. Never a draft is a real 0.0.
+
+    `as_of` is `merged_at or closed_at or now` (see `derive`), not always `now`: a PR closed
+    or merged while still a draft must stop accruing draft hours at that moment, or the
+    number keeps growing after the PR has stopped existing and, once `tracking == "final"`,
+    is frozen wrong forever.
+    """
+    closed = close_intervals(draft_intervals, as_of)
     return hours(sum((end - start).total_seconds() for start, end in closed))
 
 

@@ -1,6 +1,6 @@
 # PR Progress Tracker — Design Proposal
 
-*Created: 2026-09-17 18:41 CEST · Updated: 2026-09-17 19:04 CEST*
+*Created: 2026-09-17 18:41 CEST · Updated: 2026-09-17 20:01 CEST*
 
 ## 1. Purpose and scope
 
@@ -283,7 +283,10 @@ Remaining edge cases, decided explicitly:
 
 - **Never a draft** → `draft_intervals = []`, ready hours equal wall hours.
 - **Still a draft** → the final draft interval is left open-ended (`end: null`) and closed at
-  measurement time with `now`; `open_hours` measures from creation.
+  `merged_at or closed_at or now` — the same clock `open_hours` uses. A PR closed or merged
+  while still a draft stops accruing draft hours at that moment, not at whatever `now`
+  happens to be on a later read; `now` only applies while the PR is genuinely still open.
+  `open_hours` measures from creation.
 - **Never ready** (created as a draft and still one) → `ready_at` is `null` and every
   review-side metric is `null`. This is the only case that nulls them.
 - **Ready, reviewed, then pushed back to draft** → `ready_at` and the approval metrics are
