@@ -1,6 +1,6 @@
 # PR Progress Tracker — Design Proposal
 
-*Created: 2026-09-17 18:41 CEST · Updated: 2026-09-17 20:01 CEST*
+*Created: 2026-09-17 18:41 CEST · Updated: 2026-09-17 20:52 CEST*
 
 ## 1. Purpose and scope
 
@@ -47,14 +47,17 @@ with no I/O and no dependence on the previous record. This is the part to unit-t
 
 ```
 config/prs.txt                  # one PR URL per line; # comments and blank lines allowed
-config/internal-reviewers.txt   # one GitHub login per line
-config/external-reviewers.txt   # one GitHub login per line
+config/internal-reviewers.txt   # one GitHub login per line — our own team
+config/external-reviewers.txt   # one GitHub login per line — the upstream maintainers
 config/settings.json            # optional: report window, percentiles, stale thresholds
 ```
 
 - PR URL format: `https://github.com/{owner}/{repo}/pull/{number}` → parsed into a
   `(owner, repo, number)` triple. Reject anything else loudly (fail the run) — a typo'd
   URL silently dropped is worse than a red build.
+- The two lists are the two **stages of one review pipeline**, not two independent audiences:
+  internal reviewers are our own teammates, who review first, and external reviewers are the
+  repo maintainers the PR is handed to afterwards. The order is what §6.2 measures.
 - Logins are compared **case-insensitively**; a leading `@` is stripped.
 - A login in both lists is a config error → fail the run.
 - Approvals by logins in neither list are classified `other` and satisfy **neither** the
@@ -199,10 +202,13 @@ are never edited by hand.
     "draft_at_creation":     true,
     "draft_intervals":       [["2026-09-10T08:00:00Z", "2026-09-11T09:15:00Z"]],
     "first_review_at":       "2026-09-11T14:02:00Z",
+    "first_internal_review_at":   "2026-09-11T14:02:00Z",
+    "first_external_review_at":   null,
     "first_changes_requested_at": "2026-09-11T14:02:00Z",
     "internal_approved_at":  "2026-09-12T10:30:00Z",
     "external_approved_at":  null,
     "other_approved_at":     null,
+    "approval_path":         "internal_only",
     "merged_at":             null,
     "closed_at":             null
   },
@@ -210,8 +216,11 @@ are never edited by hand.
     "hours_draft_total":           25.25,
     "hours_created_to_ready":      25.25,
     "ready_hours_to_first_review": 4.78,
+    "ready_hours_to_internal_review":  4.78,
+    "ready_hours_to_external_review":  null,
     "ready_hours_to_internal_approval": 24.0,
     "ready_hours_to_external_approval": null,
+    "ready_hours_internal_to_external_approval": null,
     "wall_hours_to_merge":         null,
     "changes_requested_count":     1,
     "review_rounds":               2,
@@ -251,10 +260,12 @@ fills with empty churn.
 | `draft_at_creation` | `snapshot.is_draft XOR (count of draft/ready transition events is odd)` — see §6.1 |
 | `draft_intervals` | forward replay of the draft state machine from `draft_at_creation` |
 | `ready_at` | first moment the PR was in the ready state: `created_at` if not `draft_at_creation`, else the first `ready_for_review` event |
-| `first_review_at` | earliest non-`PENDING` review of any state |
+| `first_review_at` | earliest non-`PENDING` review of any state, from any reviewer class |
+| `first_internal_review_at` / `first_external_review_at` | the same rule restricted to one class — see §6.2 |
 | `first_changes_requested_at` | earliest review with `CHANGES_REQUESTED` |
 | `internal_approved_at` | earliest `APPROVED` review whose author is in the internal list |
 | `external_approved_at` | earliest `APPROVED` review whose author is in the external list |
+| `approval_path` | the observed order of those two approvals — see §6.2 |
 | `merged_at` / `closed_at` | from the `merged`/`closed` timeline events, with `snapshot.state` deciding which applies (`MERGED` is checked first). The PR object's own `mergedAt`/`closedAt` are not carried on `Snapshot`; the timeline is fully paginated, so the events are equally authoritative. |
 
 ### 6.1 Draft time is an interval problem, not a milestone
@@ -314,7 +325,54 @@ Remaining edge cases, decided explicitly:
 - **Durations measured from `ready_at`, not `created_at`**, for review-side metrics — a PR
   nobody could review yet shouldn't be penalized for sitting in draft. `hours_to_merge` is
   measured from `created_at` because that is the number people mean by "lead time".
-- Negative durations (clock skew, out-of-order data) are clamped to 0 and logged.
+- Negative durations (clock skew, out-of-order data) are clamped to 0 and logged. *Both* halves
+  matter: an unlogged clamp is indistinguishable from a genuine zero, so no duration helper may
+  short-circuit a reversed span before it reaches the clamp — `timeutil.hours` is the one place
+  that decision is made.
+
+### 6.2 Review is a two-stage pipeline, not two parallel audiences
+
+The two reviewer lists are sequential stages: our own team signs off, then the PR is handed
+to the repo maintainers. Measuring both approvals independently from `ready_at` — the
+obvious reading of §6's table — makes three real things unexpressible:
+
+- **The handoff wait.** Most of `ready_hours_to_external_approval` on a PR that followed the
+  process is just our own review time. `ready_hours_internal_to_external_approval` isolates
+  the stretch we wait through but do not control.
+- **A bypassed pipeline.** A maintainer approving with no internal sign-off renders
+  identically to "internal approval not reached yet": an em dash in both cases.
+- **Which side is slow.** `first_review_at` blends the classes (and includes `other`), so
+  "how fast do we pick things up" and "how fast do the maintainers respond" are one number.
+
+`approval_path` records the sequence as a fact, not a judgement — `external_only` and
+`external_first` are normal on repos we do not control, and are worth *seeing*:
+
+| Value | Meaning |
+| --- | --- |
+| `none` | neither class has approved yet |
+| `internal_only` | our team approved; still waiting on a maintainer |
+| `external_only` | a maintainer approved with no internal sign-off — pipeline bypassed |
+| `internal_first` | both approved, in the intended order (including simultaneously) |
+| `external_first` | both approved, but the maintainer got there first |
+
+The boundary is `internal_at <= external_at`: two approvals bearing the same timestamp — GitHub
+records seconds, so bulk or scripted approvals can genuinely tie — count as the intended order,
+with a handoff of `0.0`. That zero is literally true, unlike the `external_first` zero below.
+
+`ready_hours_internal_to_external_approval` is `null` unless `approval_path ==
+"internal_first"`. For `external_first` the span is negative and would clamp to `0.0`, which
+reads as "handed off instantly" when what actually happened is the opposite; `approval_path`
+already carries that fact, and a null is honest where a zero is not. Like the other
+review-side metrics it is measured in ready hours, so a draft dip between the two approvals
+is not charged to maintainer latency.
+
+An `other` approval (a login in neither list) never enters the pipeline: it fills
+`other_approved_at` and leaves `approval_path` untouched.
+
+Consumers recompute the path from the two timestamps rather than trusting the stored field.
+A record written before `approval_path` existed loads with the `"none"` default until
+`verify --write` backfills it, and a report that silently dropped such a PR from its counts
+and its attention list would be exactly the quiet failure this design refuses elsewhere.
 
 ## 7. Pipeline and repo layout
 
@@ -405,10 +463,19 @@ does not distort the metrics; it only delays the report.
 2. **Aggregates** — for each metric: n, median, p90, max. Median and p90 rather than mean,
    because a single stalled PR wrecks a mean. Reported over the whole watchlist and over
    PRs whose relevant milestone completed.
-3. **Per-PR table** — PR link, author, state, and each metric formatted as `2d 4h`, with
-   `—` for not-yet-reached and `⏳ 3d` for in-flight.
-4. **Attention list** — ready >N hours with no review, approved but unmerged >N hours,
-   changes requested with no follow-up review. Thresholds from `config/settings.json`.
+3. **Review pipeline** — a count per `approval_path` value (§6.2). A process metric, not an
+   alert: it is the only place a bypassed internal review is distinguishable from one that
+   simply has not happened yet, since both are an em dash in the table below.
+4. **Per-PR table** — PR link, author, state, and each metric formatted as `2d 4h`, with
+   `—` for not-yet-reached and `⏳ 3d` for in-flight. The `Handoff` column is blank unless
+   our team approved first; its in-flight clock runs only while `approval_path ==
+   "internal_only"`, because with no internal sign-off there is nothing to measure from.
+5. **Attention list** — four buckets, keyed to *where in the pipeline* the PR is stuck:
+   ready >N hours with no review; internally approved >N hours with no maintainer approval
+   (nudge upstream); **fully** approved but unmerged >N hours (a merge-step problem, so both
+   classes must have signed off — a half-approved PR is mid-pipeline, not stuck at the
+   merge); changes requested with no follow-up review. Thresholds from
+   `config/settings.json`.
 
 Phase 2 hook: the dashboard consumes `data/index.json` directly, so the markdown renderer
 and the future web UI share the same derived rollup and can't drift.

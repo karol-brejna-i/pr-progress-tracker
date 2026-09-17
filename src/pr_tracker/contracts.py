@@ -70,6 +70,18 @@ ReviewState = Literal["COMMENTED", "APPROVED", "CHANGES_REQUESTED", "DISMISSED"]
 
 ReviewerClass = Literal["internal", "external", "other"]
 
+# Whether the two-stage review pipeline was actually followed: internal reviewers (our own
+# team) sign off first, then the PR is handed to the external repo maintainers. This is a
+# *fact about the sequence*, not a judgement — `external_only` and `external_first` are
+# normal on repos we don't control, and are worth seeing rather than hiding.
+#
+#   none           no approval from either class yet
+#   internal_only  our team approved; still waiting on a maintainer
+#   external_only  a maintainer approved with no internal sign-off — pipeline bypassed
+#   internal_first both approved, in the intended order
+#   external_first both approved, but the maintainer got there first
+ApprovalPath = Literal["none", "internal_only", "external_only", "internal_first", "external_first"]
+
 PRState = Literal["OPEN", "CLOSED", "MERGED"]
 
 Tracking = Literal["active", "final"]
@@ -170,10 +182,16 @@ class Milestones:
     # end is None while the PR is currently a draft; closed at `now` when measuring.
     draft_intervals: list[tuple[datetime, datetime | None]] = field(default_factory=list)
     first_review_at: datetime | None = None
+    # Per-class first review. `first_review_at` stays class-agnostic (it includes `other`);
+    # these two separate "how fast does our team pick it up" — which we control — from "how
+    # fast do the maintainers respond", which we do not.
+    first_internal_review_at: datetime | None = None
+    first_external_review_at: datetime | None = None
     first_changes_requested_at: datetime | None = None
     internal_approved_at: datetime | None = None
     external_approved_at: datetime | None = None
     other_approved_at: datetime | None = None
+    approval_path: ApprovalPath = "none"
     merged_at: datetime | None = None
     closed_at: datetime | None = None
 
@@ -185,8 +203,15 @@ class Metrics:
     hours_draft_total: float | None = None
     hours_created_to_ready: float | None = None
     ready_hours_to_first_review: float | None = None
+    ready_hours_to_internal_review: float | None = None
+    ready_hours_to_external_review: float | None = None
     ready_hours_to_internal_approval: float | None = None
     ready_hours_to_external_approval: float | None = None
+    # Handoff latency: internal sign-off -> maintainer approval, the stretch we wait through
+    # but do not control. Only meaningful when approval_path == "internal_first"; None
+    # otherwise, because a clamped 0.0 would read as "instant handoff" when what actually
+    # happened is that the pipeline was bypassed or ran backwards.
+    ready_hours_internal_to_external_approval: float | None = None
     wall_hours_to_merge: float | None = None
     changes_requested_count: int = 0
     review_rounds: int = 0

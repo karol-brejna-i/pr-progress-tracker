@@ -19,7 +19,8 @@ import statistics
 from datetime import datetime
 from pathlib import Path
 
-from pr_tracker.contracts import Config, PRRecord
+from pr_tracker.contracts import ApprovalPath, Config, PRRecord
+from pr_tracker.derive import approval_path_of
 from pr_tracker.timeutil import format_ts, hours_between, hours_excluding
 
 NOT_REACHED = "—"
@@ -68,6 +69,14 @@ CSV_COLUMNS: tuple[str, ...] = (
     "history_runs",
     "last_error",
     "schema_version",
+    # Appended (never inserted) when the two-stage pipeline model was added — existing
+    # consumers keep their column positions.
+    "first_internal_review_at",
+    "first_external_review_at",
+    "approval_path",
+    "ready_hours_to_internal_review",
+    "ready_hours_to_external_review",
+    "ready_hours_internal_to_external_approval",
 )
 
 # (attribute on Metrics, column heading). Order is the report's column order.
@@ -75,8 +84,11 @@ AGGREGATE_METRICS: tuple[tuple[str, str], ...] = (
     ("hours_draft_total", "Draft total"),
     ("hours_created_to_ready", "Created → ready"),
     ("ready_hours_to_first_review", "Ready → first review"),
+    ("ready_hours_to_internal_review", "Ready → internal review"),
+    ("ready_hours_to_external_review", "Ready → external review"),
     ("ready_hours_to_internal_approval", "Ready → internal approval"),
     ("ready_hours_to_external_approval", "Ready → external approval"),
+    ("ready_hours_internal_to_external_approval", "Internal → external approval (handoff)"),
     ("wall_hours_to_merge", "Created → merge (wall)"),
     ("open_hours", "Open duration"),
 )
@@ -89,6 +101,18 @@ AGGREGATE_METRICS: tuple[tuple[str, str], ...] = (
 
 def _ts(value: datetime | None) -> str | None:
     return None if value is None else format_ts(value)
+
+
+def _path_of(record: PRRecord) -> ApprovalPath:
+    """The record's approval path, recomputed from its own approval timestamps.
+
+    Not `record.milestones.approval_path`: that field is what gets *written out* for external
+    consumers, but a record stored before it existed defaults to `"none"`, which would quietly
+    drop the PR out of the pipeline counts and the attention list until `verify --write` ran.
+    """
+    return approval_path_of(
+        record.milestones.internal_approved_at, record.milestones.external_approved_at
+    )
 
 
 def build_index(records: list[PRRecord]) -> list[dict]:
@@ -123,17 +147,25 @@ def build_index(records: list[PRRecord]) -> list[dict]:
                 "ready_at": _ts(milestones.ready_at),
                 "draft_at_creation": milestones.draft_at_creation,
                 "first_review_at": _ts(milestones.first_review_at),
+                "first_internal_review_at": _ts(milestones.first_internal_review_at),
+                "first_external_review_at": _ts(milestones.first_external_review_at),
                 "first_changes_requested_at": _ts(milestones.first_changes_requested_at),
                 "internal_approved_at": _ts(milestones.internal_approved_at),
                 "external_approved_at": _ts(milestones.external_approved_at),
                 "other_approved_at": _ts(milestones.other_approved_at),
+                "approval_path": _path_of(record),
                 "merged_at": _ts(milestones.merged_at),
                 "closed_at": _ts(milestones.closed_at),
                 "hours_draft_total": metrics.hours_draft_total,
                 "hours_created_to_ready": metrics.hours_created_to_ready,
                 "ready_hours_to_first_review": metrics.ready_hours_to_first_review,
+                "ready_hours_to_internal_review": metrics.ready_hours_to_internal_review,
+                "ready_hours_to_external_review": metrics.ready_hours_to_external_review,
                 "ready_hours_to_internal_approval": metrics.ready_hours_to_internal_approval,
                 "ready_hours_to_external_approval": metrics.ready_hours_to_external_approval,
+                "ready_hours_internal_to_external_approval": (
+                    metrics.ready_hours_internal_to_external_approval
+                ),
                 "wall_hours_to_merge": metrics.wall_hours_to_merge,
                 "changes_requested_count": metrics.changes_requested_count,
                 "review_rounds": metrics.review_rounds,
@@ -319,6 +351,43 @@ def _aggregate_lines(records: list[PRRecord], cfg: Config) -> list[str]:
     return lines
 
 
+# (approval_path value, label). Order is the order they appear in the report.
+_APPROVAL_PATH_LABELS: tuple[tuple[str, str], ...] = (
+    ("internal_first", "Internal → external (intended order)"),
+    ("external_first", "External approved before internal"),
+    ("internal_only", "Internal only — awaiting a maintainer"),
+    ("external_only", "External only — internal review bypassed"),
+    ("none", "No approval yet"),
+)
+
+
+def _pipeline_lines(records: list[PRRecord]) -> list[str]:
+    """How often the two-stage pipeline was actually followed.
+
+    A process metric rather than an alert: `external_only` and `external_first` are normal on
+    repos we do not control, but they are worth counting, because a `—` in the Internal column
+    otherwise looks identical to "not reached yet".
+    """
+    counts = {value: 0 for value, _ in _APPROVAL_PATH_LABELS}
+    for record in records:
+        path = _path_of(record)
+        counts[path] = counts.get(path, 0) + 1
+
+    lines = [
+        "## Review pipeline",
+        "",
+        "Internal reviewers are our own team, who sign off before the PR is handed to the",
+        "external repo maintainers. This is how often that order actually held.",
+        "",
+        f"| Path | n / {len(records)} |",
+        "| --- | --- |",
+    ]
+    for value, label in _APPROVAL_PATH_LABELS:
+        lines.append(f"| {label} | {counts.get(value, 0)} |")
+    lines.append("")
+    return lines
+
+
 _PR_TABLE_HEADER = (
     "PR",
     "Author",
@@ -328,6 +397,7 @@ _PR_TABLE_HEADER = (
     "→ 1st review",
     "→ Internal ✅",
     "→ External ✅",
+    "Handoff",
     "Other ✅",
     "→ Merge",
     "CR",
@@ -364,6 +434,18 @@ def _pr_row(record: PRRecord, now: datetime) -> list[str]:
         record, "wall_hours_to_merge", hours_between(milestones.created_at, now)
     )
 
+    # The handoff clock only runs once our own team has signed off and we are waiting on a
+    # maintainer. With no internal approval there is nothing to measure from, so the cell
+    # stays `—` rather than borrowing the ready clock like the columns above.
+    handoff_elapsed = None
+    if _path_of(record) == "internal_only" and milestones.internal_approved_at is not None:
+        handoff_elapsed = hours_excluding(
+            milestones.internal_approved_at, now, milestones.draft_intervals, now=now
+        )
+    handoff_value, handoff_flight = _metric_cell(
+        record, "ready_hours_internal_to_external_approval", handoff_elapsed
+    )
+
     # Informational only: an `other` approval satisfies neither approval milestone, so it
     # gets no in-flight clock — the column just reports that it happened, and when.
     if milestones.other_approved_at is not None and milestones.ready_at is not None:
@@ -395,6 +477,7 @@ def _pr_row(record: PRRecord, now: datetime) -> list[str]:
         format_metric(first_review_value, in_flight=first_review_flight),
         format_metric(internal_value, in_flight=internal_flight),
         format_metric(external_value, in_flight=external_flight),
+        format_metric(handoff_value, in_flight=handoff_flight),
         other_cell,
         format_metric(merge_value, in_flight=merge_flight),
         str(metrics.changes_requested_count),
@@ -416,6 +499,10 @@ def _pr_table_lines(records: list[PRRecord], now: datetime) -> list[str]:
         "",
         f"`{NOT_REACHED}` = milestone not reached · `{IN_FLIGHT}` = still in flight · "
         "durations are ready hours (draft time excluded) except `→ Merge`, which is wall clock.",
+        "",
+        "`Handoff` is internal sign-off → maintainer approval. It is blank unless our team "
+        "approved first: a maintainer who approved without internal review never had a handoff "
+        "to wait for.",
         "",
     ]
     return lines
@@ -441,6 +528,7 @@ def _last_changes_requested_without_followup(record: PRRecord) -> datetime | Non
 
 def _attention_lines(records: list[PRRecord], cfg: Config, now: datetime) -> list[str]:
     stale_review: list[str] = []
+    awaiting_maintainer: list[str] = []
     stale_merge: list[str] = []
     unanswered: list[str] = []
 
@@ -459,15 +547,33 @@ def _attention_lines(records: list[PRRecord], cfg: Config, now: datetime) -> lis
         ):
             stale_review.append(f"- {link} — ready {format_duration(ready_so_far)}, no review yet")
 
-        approvals = [
-            at
-            for at in (milestones.internal_approved_at, milestones.external_approved_at)
-            if at is not None
-        ]
-        if approvals and milestones.merged_at is None:
-            since = hours_between(max(approvals), now)
+        # Waiting on the other side of the pipeline: our team has approved, no maintainer has.
+        # This is the bucket to nudge upstream about; it is not a merge problem.
+        if _path_of(record) == "internal_only" and milestones.internal_approved_at:
+            since = hours_excluding(
+                milestones.internal_approved_at, now, milestones.draft_intervals, now=now
+            )
+            if since > cfg.stale_review_hours:
+                awaiting_maintainer.append(
+                    f"- {link} — internally approved {format_duration(since)} ago, "
+                    "no maintainer approval"
+                )
+
+        # "Approved and unmerged" means the pipeline is *complete* — both sides signed off and
+        # the PR still is not in. A PR with only one class approved is mid-pipeline, not stuck
+        # at the merge step, and belongs in one of the buckets above instead.
+        if (
+            _path_of(record) in ("internal_first", "external_first")
+            and milestones.merged_at is None
+        ):
+            since = hours_between(
+                max(milestones.internal_approved_at, milestones.external_approved_at),  # type: ignore[type-var]
+                now,
+            )
             if since > cfg.stale_merge_hours:
-                stale_merge.append(f"- {link} — approved {format_duration(since)} ago, unmerged")
+                stale_merge.append(
+                    f"- {link} — fully approved {format_duration(since)} ago, unmerged"
+                )
 
         pending_cr = _last_changes_requested_without_followup(record)
         if pending_cr is not None:
@@ -479,7 +585,11 @@ def _attention_lines(records: list[PRRecord], cfg: Config, now: datetime) -> lis
     lines = ["## Attention", ""]
     sections = (
         (f"Ready > {cfg.stale_review_hours}h with no review", stale_review),
-        (f"Approved > {cfg.stale_merge_hours}h and still unmerged", stale_merge),
+        (
+            f"Internally approved > {cfg.stale_review_hours}h, waiting on a maintainer",
+            awaiting_maintainer,
+        ),
+        (f"Fully approved > {cfg.stale_merge_hours}h and still unmerged", stale_merge),
         ("Changes requested with no follow-up review", unanswered),
     )
     if not any(items for _, items in sections):
@@ -498,6 +608,7 @@ def render_markdown(records: list[PRRecord], cfg: Config, now: datetime) -> str:
     lines = [
         *_header_lines(watched, now),
         *_aggregate_lines(watched, cfg),
+        *_pipeline_lines(watched),
         *_pr_table_lines(watched, now),
         *_attention_lines(watched, cfg, now),
     ]

@@ -21,7 +21,16 @@ from __future__ import annotations
 import logging
 from datetime import datetime
 
-from .contracts import DRAFT_TRANSITIONS, Config, Event, Metrics, Milestones, Snapshot
+from .contracts import (
+    DRAFT_TRANSITIONS,
+    ApprovalPath,
+    Config,
+    Event,
+    Metrics,
+    Milestones,
+    ReviewerClass,
+    Snapshot,
+)
 from .timeutil import Interval, close_intervals, hours, hours_between, hours_excluding
 
 logger = logging.getLogger(__name__)
@@ -67,10 +76,13 @@ def derive(
 
     reviews = [e for e in ordered if e.type == "review"]
     first_review_at = reviews[0].at if reviews else None
+    first_internal_review_at = _first_review_by_class(reviews, cfg, "internal")
+    first_external_review_at = _first_review_by_class(reviews, cfg, "external")
     first_changes_requested_at = next(
         (e.at for e in reviews if e.review_state == "CHANGES_REQUESTED"), None
     )
     approvals = _earliest_approvals(reviews, cfg)
+    approval_path = approval_path_of(approvals.get("internal"), approvals.get("external"))
 
     merged_at, closed_at = _terminal_timestamps(ordered, snapshot)
     # A PR that is closed/merged has stopped existing; an open-ended draft interval must
@@ -83,10 +95,13 @@ def derive(
         draft_at_creation=draft_at_creation,
         draft_intervals=draft_intervals,
         first_review_at=first_review_at,
+        first_internal_review_at=first_internal_review_at,
+        first_external_review_at=first_external_review_at,
         first_changes_requested_at=first_changes_requested_at,
         internal_approved_at=approvals.get("internal"),
         external_approved_at=approvals.get("external"),
         other_approved_at=approvals.get("other"),
+        approval_path=approval_path,
         merged_at=merged_at,
         closed_at=closed_at,
     )
@@ -95,11 +110,24 @@ def derive(
         hours_draft_total=_hours_draft_total(draft_intervals, as_of),
         hours_created_to_ready=(None if ready_at is None else hours_between(created_at, ready_at)),
         ready_hours_to_first_review=_ready_hours(ready_at, first_review_at, draft_intervals, now),
+        ready_hours_to_internal_review=_ready_hours(
+            ready_at, first_internal_review_at, draft_intervals, now
+        ),
+        ready_hours_to_external_review=_ready_hours(
+            ready_at, first_external_review_at, draft_intervals, now
+        ),
         ready_hours_to_internal_approval=_ready_hours(
             ready_at, approvals.get("internal"), draft_intervals, now
         ),
         ready_hours_to_external_approval=_ready_hours(
             ready_at, approvals.get("external"), draft_intervals, now
+        ),
+        ready_hours_internal_to_external_approval=_handoff_hours(
+            approval_path,
+            approvals.get("internal"),
+            approvals.get("external"),
+            draft_intervals,
+            now,
         ),
         wall_hours_to_merge=(None if merged_at is None else hours_between(created_at, merged_at)),
         changes_requested_count=sum(1 for e in reviews if e.review_state == "CHANGES_REQUESTED"),
@@ -180,6 +208,59 @@ def _earliest_approvals(reviews: list[Event], cfg: Config) -> dict[str, datetime
         if cls not in earliest or event.at < earliest[cls]:
             earliest[cls] = event.at
     return earliest
+
+
+def _first_review_by_class(
+    reviews: list[Event], cfg: Config, want: ReviewerClass
+) -> datetime | None:
+    """Earliest review of any state by a reviewer in `want`'s class.
+
+    Matches `first_review_at`'s "any non-PENDING state" semantics — a CHANGES_REQUESTED or a
+    COMMENTED review is still the moment that side of the pipeline engaged with the PR.
+    """
+    return next((e.at for e in reviews if cfg.classify(e.actor) == want), None)
+
+
+def approval_path_of(
+    internal_at: datetime | None,
+    external_at: datetime | None,
+) -> ApprovalPath:
+    """Classify the observed approval sequence. See `contracts.ApprovalPath`.
+
+    Public because `report.py` classifies from the timestamps too rather than trusting the
+    stored `Milestones.approval_path`: a record written before the field existed carries the
+    default `"none"`, and a report that silently omits such a PR from its attention list is
+    the exact failure this project treats as worse than a loud one.
+    """
+    if internal_at is None and external_at is None:
+        return "none"
+    if external_at is None:
+        return "internal_only"
+    if internal_at is None:
+        return "external_only"
+    return "internal_first" if internal_at <= external_at else "external_first"
+
+
+def _handoff_hours(
+    approval_path: ApprovalPath,
+    internal_at: datetime | None,
+    external_at: datetime | None,
+    draft_intervals: list[Interval],
+    now: datetime,
+) -> float | None:
+    """Ready hours from internal sign-off to maintainer approval.
+
+    Deliberately `None` unless the pipeline actually ran in order. For `external_first` the
+    elapsed time is negative and would clamp to 0.0, which reads as "handed off instantly"
+    when the truth is that the maintainer approved before our team did — a different fact,
+    and one `approval_path` already records. Simultaneous approvals classify as
+    `internal_first` and give a real 0.0, which is what happened.
+    """
+    # The None checks are unreachable via `approval_path_of` (which only returns
+    # "internal_first" with both timestamps present) and are here to narrow the types.
+    if approval_path != "internal_first" or internal_at is None or external_at is None:
+        return None
+    return hours_excluding(internal_at, external_at, draft_intervals, now=now)
 
 
 def _terminal_timestamps(

@@ -79,14 +79,18 @@ def merged_pr() -> PRRecord:
             internal_approved_at=t(12, 10, 30),
             external_approved_at=t(12, 18),
             other_approved_at=t(12, 20),
+            approval_path="internal_first",
             merged_at=t(13, 8),
         ),
         metrics=Metrics(
             hours_draft_total=25.25,
             hours_created_to_ready=25.25,
             ready_hours_to_first_review=4.78,
+            ready_hours_to_internal_review=4.78,
+            ready_hours_to_external_review=32.75,
             ready_hours_to_internal_approval=25.25,
             ready_hours_to_external_approval=32.75,
+            ready_hours_internal_to_external_approval=7.5,
             wall_hours_to_merge=72.0,
             changes_requested_count=1,
             review_rounds=3,
@@ -133,6 +137,11 @@ def closed_unmerged_pr() -> PRRecord:
 
 
 def approved_unmerged_pr() -> PRRecord:
+    """Internally approved, no maintainer yet: mid-pipeline, not stuck at the merge step.
+
+    `approval_path` is deliberately left at its `"none"` default — that is what a record
+    written before the field existed looks like, and the report must still classify it.
+    """
     return make_record(
         105,
         title="Approved but idle",
@@ -149,6 +158,62 @@ def approved_unmerged_pr() -> PRRecord:
             review_rounds=1,
             distinct_reviewers=1,
             open_hours=172.0,
+        ),
+    )
+
+
+def fully_approved_unmerged_pr() -> PRRecord:
+    """Both sides signed off days ago and it is still not in — a merge-step problem."""
+    return make_record(
+        107,
+        title="Everyone approved, nobody merged",
+        milestones=Milestones(
+            created_at=t(10, 8),
+            ready_at=t(10, 8),
+            first_review_at=t(10, 12),
+            first_internal_review_at=t(10, 12),
+            first_external_review_at=t(11, 8),
+            internal_approved_at=t(11, 8),
+            external_approved_at=t(11, 20),
+            approval_path="internal_first",
+        ),
+        metrics=Metrics(
+            hours_created_to_ready=0.0,
+            ready_hours_to_first_review=4.0,
+            ready_hours_to_internal_approval=24.0,
+            ready_hours_to_external_approval=36.0,
+            ready_hours_internal_to_external_approval=12.0,
+            review_rounds=2,
+            distinct_reviewers=2,
+            open_hours=172.0,
+        ),
+    )
+
+
+def bypassed_pr() -> PRRecord:
+    """A maintainer approved with no internal sign-off: the pipeline was skipped."""
+    return make_record(
+        108,
+        state="MERGED",
+        title="Straight to the maintainer",
+        milestones=Milestones(
+            created_at=t(14, 8),
+            ready_at=t(14, 8),
+            first_review_at=t(15, 8),
+            first_external_review_at=t(15, 8),
+            external_approved_at=t(15, 8),
+            approval_path="external_only",
+            merged_at=t(15, 10),
+        ),
+        metrics=Metrics(
+            hours_created_to_ready=0.0,
+            ready_hours_to_first_review=24.0,
+            ready_hours_to_external_review=24.0,
+            ready_hours_to_external_approval=24.0,
+            wall_hours_to_merge=26.0,
+            review_rounds=1,
+            distinct_reviewers=1,
+            open_hours=26.0,
         ),
     )
 
@@ -396,7 +461,7 @@ class TestRenderMarkdown:
         cells = [cell.strip() for cell in row.split("|")[1:-1]]
         # Draft, first review, internal, external, other, merge are all unreached.
         assert cells[3] == report.NOT_REACHED
-        assert cells[5:10] == [report.NOT_REACHED] * 5
+        assert cells[5:11] == [report.NOT_REACHED] * 6
         assert report.IN_FLIGHT not in row
 
     def test_open_pr_with_no_review_shows_in_flight_not_zero(self):
@@ -405,7 +470,7 @@ class TestRenderMarkdown:
         cells = [cell.strip() for cell in row.split("|")[1:-1]]
         assert cells[5].startswith(report.IN_FLIGHT)  # → 1st review
         assert cells[6].startswith(report.IN_FLIGHT)  # → internal approval
-        assert cells[9].startswith(report.IN_FLIGHT)  # → merge
+        assert cells[10].startswith(report.IN_FLIGHT)  # → merge
 
     def test_still_draft_pr_marks_draft_in_flight_and_ready_pending(self):
         out = report.render_markdown([still_draft_pr()], CFG, NOW)
@@ -422,13 +487,13 @@ class TestRenderMarkdown:
         assert "Other ✅" in out
         row = next(line for line in out.splitlines() if "api#101" in line and line.startswith("|"))
         cells = [cell.strip() for cell in row.split("|")[1:-1]]
-        assert cells[8] == "1d 11h"  # ready → other approval, draft excluded
+        assert cells[9] == "1d 11h"  # ready → other approval, draft excluded
 
     def test_other_approval_absent_is_em_dash(self):
         out = report.render_markdown([approved_unmerged_pr()], CFG, NOW)
         row = next(line for line in out.splitlines() if "api#105" in line and line.startswith("|"))
         cells = [cell.strip() for cell in row.split("|")[1:-1]]
-        assert cells[8] == report.NOT_REACHED
+        assert cells[9] == report.NOT_REACHED
 
     def test_missing_author_is_not_blank_zero(self):
         out = report.render_markdown([still_draft_pr()], CFG, NOW)
@@ -443,9 +508,9 @@ class TestRenderMarkdown:
         blank = make_record(301, state="CLOSED", metrics=Metrics())
         out = report.render_markdown([blank], CFG, NOW)
         row = next(line for line in out.splitlines() if line.startswith("| [octo/api#301]"))
-        duration_cells = [cell.strip() for cell in row.split("|")[1:-1]][3:10]
+        duration_cells = [cell.strip() for cell in row.split("|")[1:-1]][3:11]
 
-        assert duration_cells == [report.NOT_REACHED] * 7
+        assert duration_cells == [report.NOT_REACHED] * 8
         for forbidden in ("0", "0m", "0.0h", "0h"):
             assert forbidden not in duration_cells
 
@@ -454,7 +519,7 @@ class TestRenderMarkdown:
         out = report.render_markdown([stalled_open_pr()], CFG, NOW)
         row = next(line for line in out.splitlines() if line.startswith("| [octo/api#102]"))
         cells = [cell.strip() for cell in row.split("|")[1:-1]]
-        for index in (5, 6, 7, 9):  # review / internal / external / merge
+        for index in (5, 6, 7, 10):  # review / internal / external / merge
             assert cells[index].startswith(report.IN_FLIGHT)
             assert cells[index] != f"{report.IN_FLIGHT} 0m"
 
@@ -502,11 +567,19 @@ class TestAttention:
         out = report.render_markdown([still_draft_pr()], CFG, NOW)
         assert "Nothing needs attention." in out
 
-    def test_approved_but_unmerged_past_threshold(self):
+    def test_fully_approved_but_unmerged_past_threshold(self):
+        out = report.render_markdown([fully_approved_unmerged_pr()], CFG, NOW)
+        attention = out.split("## Attention")[1]
+        assert "Fully approved > 72h and still unmerged" in attention
+        assert "octo/api#107" in attention
+
+    def test_internally_approved_pr_waits_on_a_maintainer_not_on_the_merge(self):
+        """Only our team has signed off, so it is mid-pipeline — nudge upstream, not the merger."""
         out = report.render_markdown([approved_unmerged_pr()], CFG, NOW)
         attention = out.split("## Attention")[1]
-        assert "Approved > 72h and still unmerged" in attention
+        assert "waiting on a maintainer" in attention
         assert "octo/api#105" in attention
+        assert "unmerged" not in attention
 
     def test_merged_pr_is_never_flagged(self):
         out = report.render_markdown([merged_pr()], CFG, NOW)
@@ -541,5 +614,66 @@ class TestAttention:
 
     def test_thresholds_come_from_config(self):
         cfg = Config(stale_review_hours=1000, stale_merge_hours=1000)
-        out = report.render_markdown([stalled_open_pr(), approved_unmerged_pr()], cfg, NOW)
+        out = report.render_markdown(
+            [stalled_open_pr(), approved_unmerged_pr(), fully_approved_unmerged_pr()], cfg, NOW
+        )
         assert "Nothing needs attention." in out
+
+
+# --------------------------------------------------------------------------------------
+# The two-stage pipeline
+# --------------------------------------------------------------------------------------
+
+
+class TestReviewPipeline:
+    def test_section_counts_each_path(self):
+        out = report.render_markdown([merged_pr(), bypassed_pr(), stalled_open_pr()], CFG, NOW)
+        pipeline = out.split("## Review pipeline")[1].split("## Pull requests")[0]
+        rows = {
+            line.split("|")[1].strip(): line.split("|")[2].strip()
+            for line in pipeline.splitlines()
+            if line.startswith("| ") and "---" not in line and "Path" not in line
+        }
+        assert rows["Internal → external (intended order)"] == "1"
+        assert rows["External only — internal review bypassed"] == "1"
+        assert rows["No approval yet"] == "1"
+
+    def test_bypass_is_counted_not_rendered_as_a_missing_milestone(self):
+        """`external_only` used to be indistinguishable from "internal not reached yet"."""
+        out = report.render_markdown([bypassed_pr()], CFG, NOW)
+        pipeline = out.split("## Review pipeline")[1].split("## Pull requests")[0]
+        assert "| External only — internal review bypassed | 1 |" in pipeline
+
+    def test_path_is_recomputed_from_timestamps_not_the_stored_field(self):
+        """A record stored before `approval_path` existed carries `"none"`. Trusting it would
+        silently drop the PR from the counts and the attention list."""
+        record = fully_approved_unmerged_pr()
+        record.milestones.approval_path = "none"  # what an old record looks like on disk
+        out = report.render_markdown([record], CFG, NOW)
+        assert "| Internal → external (intended order) | 1 |" in out
+        assert report.build_index([record])[0]["approval_path"] == "internal_first"
+
+    def test_handoff_column_shows_the_measured_latency(self):
+        out = report.render_markdown([merged_pr()], CFG, NOW)
+        row = next(line for line in out.splitlines() if line.startswith("| [octo/api#101]"))
+        cells = [cell.strip() for cell in row.split("|")[1:-1]]
+        assert cells[8] == "7.5h"
+
+    def test_handoff_is_em_dash_when_the_pipeline_was_bypassed(self):
+        """No internal sign-off means there was never a handoff to wait for — not a 0."""
+        out = report.render_markdown([bypassed_pr()], CFG, NOW)
+        row = next(line for line in out.splitlines() if line.startswith("| [octo/api#108]"))
+        cells = [cell.strip() for cell in row.split("|")[1:-1]]
+        assert cells[8] == report.NOT_REACHED
+
+    def test_handoff_clock_runs_while_waiting_on_a_maintainer(self):
+        out = report.render_markdown([approved_unmerged_pr()], CFG, NOW)
+        row = next(line for line in out.splitlines() if line.startswith("| [octo/api#105]"))
+        cells = [cell.strip() for cell in row.split("|")[1:-1]]
+        assert cells[8] == f"{report.IN_FLIGHT} 6d 4h"  # since the internal approval
+
+    def test_per_class_first_review_aggregates_are_reported_separately(self):
+        out = report.render_markdown([merged_pr(), bypassed_pr()], CFG, NOW)
+        assert "| Ready → internal review |" in out
+        assert "| Ready → external review |" in out
+        assert "| Internal → external approval (handoff) |" in out

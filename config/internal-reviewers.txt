@@ -1,10 +1,10 @@
-# GitHub logins whose APPROVED review satisfies the "internally approved" milestone.
+# INTERNAL reviewers — our own teammates, who review first, before the PR is handed to the
+# upstream repo maintainers (see external-reviewers.txt).
+#
+# An APPROVED review by a login here satisfies the "internally approved" milestone. The
+# earliest such approval counts; there is no N-approvals threshold.
+#
 # One login per line; case-insensitive; a leading @ is stripped.
 # A login must not appear in both this file and external-reviewers.txt (that fails the run).
-#
-# SAMPLE DATA — replace with your actual internal reviewers. These three are simply the
-# approvers observed on the sample pytorch/ao PRs above, so the first report has something
-# to show; they are not a real internal/external split.
 
-vkuzo
-andrewor14
+liangan1

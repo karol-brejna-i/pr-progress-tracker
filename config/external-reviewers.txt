@@ -1,9 +1,13 @@
-# GitHub logins whose APPROVED review satisfies the "externally approved" milestone.
+# EXTERNAL reviewers — the upstream repo maintainers, who review after our own team has
+# signed off (see internal-reviewers.txt).
+#
+# An APPROVED review by a login here satisfies the "externally approved" milestone. The
+# earliest such approval counts; there is no N-approvals threshold.
+#
 # One login per line; case-insensitive; a leading @ is stripped.
 #
 # Approvals by logins in NEITHER list are classified "other": they are recorded and shown
 # as an informational column, but satisfy neither approval milestone.
-#
-# SAMPLE DATA — replace with your actual external reviewers.
 
-liangan1
+vkuzo
+andrewor14

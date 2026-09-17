@@ -136,3 +136,18 @@ class TestHoursExcluding:
 
     def test_reversed_bounds_clamp(self):
         assert hours_excluding(t(5), t(1), []) == 0.0
+
+    def test_reversed_bounds_log_the_clamp(self, caplog):
+        """Same rule as `hours_between`: a clamped zero must leave a trace.
+
+        A silent 0.0 here is indistinguishable from a genuine "no time elapsed", which is how
+        out-of-order event data reaches a report as a plausible-looking number.
+        """
+        with caplog.at_level("WARNING"):
+            hours_excluding(t(5), t(1), [])
+        assert "clamped to 0" in caplog.text
+
+    def test_equal_bounds_are_a_real_zero_and_log_nothing(self, caplog):
+        with caplog.at_level("WARNING"):
+            assert hours_excluding(t(5), t(5), []) == 0.0
+        assert caplog.text == ""

@@ -1,8 +1,9 @@
 # pr-progress-tracker
 
 Tracks lifecycle milestones for a watchlist of GitHub PRs — creation, draft→ready,
-first review, internal/external approval, changes requested, merge/close — and the
-elapsed-time metrics between them, computed from GitHub's own timeline events rather
+first review, internal then external approval, changes requested, merge/close — and the
+elapsed-time metrics between them, including the handoff wait between your team's
+sign-off and the upstream maintainer's, computed from GitHub's own timeline events rather
 than accumulated locally. Runs as a scheduled GitHub Action that commits the results
 back into this repo and renders a markdown report.
 
@@ -58,17 +59,24 @@ there's no separate deployment step):
 | File | Format | Notes |
 | --- | --- | --- |
 | `config/prs.txt` | one full PR URL per line, `https://github.com/<owner>/<repo>/pull/<number>` | `#` comments and blank lines ignored. Duplicates collapse, order of first appearance kept. Removing a URL doesn't delete its data — the record is kept and flagged `in_watchlist: false`. |
-| `config/internal-reviewers.txt` | one GitHub login per line | Case-insensitive, leading `@` stripped. An `APPROVED` review by one of these logins satisfies the "internally approved" milestone (first one counts, no N-approval threshold). |
-| `config/external-reviewers.txt` | same format | Same, for "externally approved". A login cannot appear in both files — that's a hard config error, not a warning. |
+| `config/internal-reviewers.txt` | one GitHub login per line | **Your own team** — the first review stage. Case-insensitive, leading `@` stripped. An `APPROVED` review by one of these logins satisfies the "internally approved" milestone (first one counts, no N-approval threshold). |
+| `config/external-reviewers.txt` | same format | **The upstream repo maintainers** — the second stage, who review after your team has signed off. A login cannot appear in both files — that's a hard config error, not a warning. |
 | `config/settings.json` | optional JSON | `stale_review_hours` (default 48), `stale_merge_hours` (default 72), `percentiles` (default `[50, 90]`) — thresholds and percentiles used by the report. Omit the file or any key to take the default. |
 
-The repo ships with sample data (`pytorch/ao` PRs, and reviewers pulled from those
-sample PRs) so the pipeline produces a real report out of the box. **Replace
-`internal-reviewers.txt` / `external-reviewers.txt` before relying on the internal/
-external split for anything real** — the shipped names are not an actual roster.
+The two lists are **the two stages of one review pipeline**, not two independent
+audiences: internal reviewers go first, then the PR is handed upstream. Getting them
+backwards does not just relabel two columns — it inverts the handoff-latency metric and
+the "Review pipeline" section, which count how often that order actually held. The
+tracker reports the observed order per PR (`internal_first`, `external_only` for a
+bypassed internal review, and so on) rather than assuming it.
 
 Approvals by a login in neither list are classified `other`: recorded and shown as an
-informational column, but they satisfy neither approval milestone.
+informational column, but they satisfy neither approval milestone and never enter the
+pipeline accounting.
+
+The repo ships with sample data (`pytorch/ao` PRs) so the pipeline produces a real report
+out of the box. **Replace both reviewer files with your actual roster before relying on
+the internal/external split for anything.**
 
 A malformed config file (bad URL, JSON syntax error, a login in both reviewer lists)
 fails the whole run rather than being silently skipped — a report that looks healthy
@@ -131,9 +139,10 @@ Exit codes: `0` ok, `1` failure (fetch/data), `2` config error.
   full accumulated event history, derived milestones and metrics. This is the durable
   state; everything else is regenerated from it.
 - `data/index.json`, `data/metrics.csv` — flat, machine-readable views over all records.
-- `reports/pr-progress.md` — the human-facing report: per-PR milestone table plus
-  aggregate percentiles, using `stale_review_hours`/`stale_merge_hours` from
-  `settings.json` to flag PRs that need attention.
+- `reports/pr-progress.md` — the human-facing report: aggregate percentiles, a count of
+  how often the internal→external review order actually held, the per-PR milestone table,
+  and an attention list that uses `stale_review_hours`/`stale_merge_hours` from
+  `settings.json` to flag PRs by *where in the pipeline* they are stuck.
 
 None of these are hand-edited — `track`/`report` own them, and a manual edit will be
 overwritten (or, for `data/prs/*.json`, flagged as a mismatch by `verify`).

@@ -110,8 +110,12 @@ def hours_excluding(
     *,
     now: datetime | None = None,
 ) -> float:
-    """Hours from start to end, excluding any time inside `intervals` ("ready hours")."""
-    if end <= start:
-        return 0.0
+    """Hours from start to end, excluding any time inside `intervals` ("ready hours").
+
+    A reversed span is clamped *and logged*, like `hours_between`: there is no early return
+    for `end <= start`, because that would drop the log half of the rule and let out-of-order
+    event data pass as a real 0.0. `overlap_seconds` already returns 0.0 for such a window,
+    so the negative span reaches `hours` intact.
+    """
     span = (end - start).total_seconds()
     return hours(span - overlap_seconds(start, end, intervals, now=now))

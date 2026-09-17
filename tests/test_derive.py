@@ -310,6 +310,132 @@ class TestApprovals:
         assert ms.internal_approved_at == t(2)
 
 
+class TestReviewPipeline:
+    """The two-stage model: our team (internal) reviews, then the maintainers (external).
+
+    `approval_path` records what the sequence actually was — a fact, not a judgement.
+    """
+
+    def test_intended_order_is_internal_first_with_a_handoff(self):
+        events = [
+            created_event(),
+            review("r1", t(6), "bob", "APPROVED"),
+            review("r2", t(20), "carol", "APPROVED"),
+        ]
+        ms, mx = derive(events, snap("MERGED"), CFG, NOW)
+
+        assert ms.approval_path == "internal_first"
+        assert mx.ready_hours_internal_to_external_approval == 14.0
+
+    def test_maintainer_first_is_recorded_not_clamped_to_zero(self):
+        """A negative span would clamp to 0.0 and read as "handed off instantly"."""
+        events = [
+            created_event(),
+            review("r1", t(6), "carol", "APPROVED"),
+            review("r2", t(20), "bob", "APPROVED"),
+        ]
+        ms, mx = derive(events, snap(), CFG, NOW)
+
+        assert ms.approval_path == "external_first"
+        assert mx.ready_hours_internal_to_external_approval is None
+
+    def test_simultaneous_approvals_count_as_the_intended_order(self):
+        """Pins the `<=` boundary. GitHub timestamps are second-granularity, so two approvals
+        can genuinely tie (scripted or bulk approvals). "Not later" is in order, and a 0.0
+        handoff is literally true here — unlike the `external_first` case, where 0.0 would be
+        a lie. Flipping this comparison would silently reclassify ties both ways.
+        """
+        events = [
+            created_event(),
+            review("r1", t(6), "bob", "APPROVED"),
+            review("r2", t(6), "carol", "APPROVED"),
+        ]
+        ms, mx = derive(events, snap(), CFG, NOW)
+
+        assert ms.approval_path == "internal_first"
+        assert mx.ready_hours_internal_to_external_approval == 0.0
+
+    def test_bypassed_pipeline_is_external_only(self):
+        events = [created_event(), review("r1", t(6), "carol", "APPROVED")]
+        ms, mx = derive(events, snap(), CFG, NOW)
+
+        assert ms.approval_path == "external_only"
+        assert mx.ready_hours_internal_to_external_approval is None
+
+    def test_awaiting_a_maintainer_is_internal_only(self):
+        events = [created_event(), review("r1", t(6), "bob", "APPROVED")]
+        ms, mx = derive(events, snap(), CFG, NOW)
+
+        assert ms.approval_path == "internal_only"
+        # Nothing to measure to yet — an in-flight clock is the report's job, not derive's.
+        assert mx.ready_hours_internal_to_external_approval is None
+
+    def test_an_other_approval_does_not_enter_the_pipeline(self):
+        events = [created_event(), review("r1", t(6), "dave", "APPROVED")]
+        ms, _ = derive(events, snap(), CFG, NOW)
+        assert ms.approval_path == "none"
+
+    def test_handoff_excludes_a_draft_dip_between_the_two_approvals(self):
+        """The PR went back to draft after our sign-off; that is not maintainer latency."""
+        events = [
+            created_event(),
+            review("r1", t(6), "bob", "APPROVED"),
+            Event(id="d1", type="convert_to_draft", at=t(8), actor="alice"),
+            Event(id="d2", type="ready_for_review", at=t(18), actor="alice"),
+            review("r2", t(20), "carol", "APPROVED"),
+        ]
+        _, mx = derive(events, snap(), CFG, NOW)
+        assert mx.ready_hours_internal_to_external_approval == 4.0
+
+    def test_the_three_review_metrics_still_add_up_across_a_draft_dip(self):
+        """internal + handoff == external, even when an approval lands *inside* a draft dip.
+
+        The three metrics are computed independently, over windows that only happen to
+        partition the same timeline; nothing in the code enforces that they agree. They do
+        because interval subtraction is additive over a partition — so this is the invariant
+        that would break first if `overlap_seconds` or `hours_excluding` were changed.
+        """
+        events = [
+            created_event(),
+            Event(id="d1", type="convert_to_draft", at=t(5), actor="alice"),
+            review("r1", t(10), "bob", "APPROVED"),  # our sign-off, mid-draft
+            Event(id="d2", type="ready_for_review", at=t(15), actor="alice"),
+            review("r2", t(20), "carol", "APPROVED"),
+        ]
+        _, mx = derive(events, snap(), CFG, NOW)
+
+        assert mx.ready_hours_to_internal_approval == 5.0
+        assert mx.ready_hours_internal_to_external_approval == 5.0
+        assert mx.ready_hours_to_external_approval == 10.0
+        assert (
+            mx.ready_hours_to_internal_approval + mx.ready_hours_internal_to_external_approval
+            == mx.ready_hours_to_external_approval
+        )
+
+    def test_first_review_is_split_by_class(self):
+        """A CHANGES_REQUESTED or COMMENTED review still means that side engaged."""
+        events = [
+            created_event(),
+            review("r1", t(2), "dave", "COMMENTED"),
+            review("r2", t(5), "bob", "CHANGES_REQUESTED"),
+            review("r3", t(9), "carol", "COMMENTED"),
+        ]
+        ms, mx = derive(events, snap(), CFG, NOW)
+
+        assert ms.first_review_at == t(2)  # class-agnostic: includes `other`
+        assert ms.first_internal_review_at == t(5)
+        assert ms.first_external_review_at == t(9)
+        assert mx.ready_hours_to_internal_review == 5.0
+        assert mx.ready_hours_to_external_review == 9.0
+
+    def test_a_class_that_never_reviewed_is_none_not_zero(self):
+        events = [created_event(), review("r1", t(5), "bob", "APPROVED")]
+        ms, mx = derive(events, snap(), CFG, NOW)
+
+        assert ms.first_external_review_at is None
+        assert mx.ready_hours_to_external_review is None
+
+
 class TestReviewCounters:
     def test_commented_only_reviews_are_not_rounds_but_do_start_the_clock(self):
         events = [
@@ -408,15 +534,18 @@ class TestDefensiveCases:
         assert ms.draft_intervals == [(CREATED, None)]
         assert mx.hours_draft_total == 240.0
 
-    def test_approval_before_ready_clamps_instead_of_going_negative(self):
+    def test_approval_before_ready_clamps_instead_of_going_negative(self, caplog):
+        """The clamp must also *log*, or an out-of-order timeline reads as a real 0.0."""
         events = [
             created_event(),
             review("r1", t(1), "bob", "APPROVED"),
             Event(id="rfr", type="ready_for_review", at=t(5), actor="alice"),
         ]
-        ms, mx = derive(events, snap(), CFG, NOW)
+        with caplog.at_level("WARNING"):
+            ms, mx = derive(events, snap(), CFG, NOW)
         assert ms.ready_at == t(5)
         assert mx.ready_hours_to_internal_approval == 0.0
+        assert "clamped to 0" in caplog.text
 
     def test_missing_created_event_falls_back_to_earliest_event(self):
         events = [review("r1", t(3), "bob", "APPROVED")]

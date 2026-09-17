@@ -65,10 +65,13 @@ def make_record(**overrides) -> PRRecord:
             draft_at_creation=True,
             draft_intervals=[(t(10, 8), t(11, 9, 15))],
             first_review_at=t(11, 14, 2),
+            first_internal_review_at=t(11, 14, 2),
+            first_external_review_at=t(12, 9),
             first_changes_requested_at=t(11, 14, 2),
-            internal_approved_at=None,
-            external_approved_at=None,
+            internal_approved_at=t(12, 8),
+            external_approved_at=t(12, 20),
             other_approved_at=None,
+            approval_path="internal_first",
             merged_at=None,
             closed_at=None,
         ),
@@ -76,8 +79,11 @@ def make_record(**overrides) -> PRRecord:
             hours_draft_total=25.25,
             hours_created_to_ready=25.25,
             ready_hours_to_first_review=4.78,
-            ready_hours_to_internal_approval=None,
-            ready_hours_to_external_approval=None,
+            ready_hours_to_internal_review=4.78,
+            ready_hours_to_external_review=23.75,
+            ready_hours_to_internal_approval=22.75,
+            ready_hours_to_external_approval=34.75,
+            ready_hours_internal_to_external_approval=12.0,
             wall_hours_to_merge=None,
             changes_requested_count=1,
             review_rounds=1,
@@ -117,6 +123,21 @@ class TestRoundTrip:
         assert loaded.events[0].at == t(10, 8)
         assert loaded.milestones.ready_at == t(11, 9, 15)
 
+    def test_record_written_before_approval_path_existed_loads_as_none(self):
+        """Additive schema: an older record must load, not raise, and not guess a path.
+
+        `verify --write` recomputes the real value from the stored events, no re-fetch needed.
+        """
+        payload = store.record_to_dict(make_record())
+        del payload["milestones"]["approval_path"]
+        del payload["milestones"]["first_internal_review_at"]
+        del payload["metrics"]["ready_hours_internal_to_external_approval"]
+
+        loaded = store.record_from_dict(payload)
+        assert loaded.milestones.approval_path == "none"
+        assert loaded.milestones.first_internal_review_at is None
+        assert loaded.metrics.ready_hours_internal_to_external_approval is None
+
     def test_open_ended_draft_interval_round_trips(self):
         """A PR currently in draft has an interval whose end is null on disk."""
         record = make_record(
@@ -147,7 +168,9 @@ class TestRoundTrip:
         assert loaded.milestones.draft_intervals == [(t(11, 9, 15), t(12)), (t(15), None)]
 
     def test_none_metrics_stay_none(self):
-        store.save_record(make_record())
+        record = make_record()
+        record.metrics.ready_hours_to_internal_approval = None
+        store.save_record(record)
         loaded = store.load_record(REF)
         assert loaded.metrics.wall_hours_to_merge is None
         assert loaded.metrics.ready_hours_to_internal_approval is None

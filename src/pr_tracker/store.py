@@ -176,10 +176,13 @@ def record_to_dict(record: PRRecord) -> dict:
             "draft_at_creation": record.milestones.draft_at_creation,
             "draft_intervals": _intervals_to_list(record.milestones.draft_intervals),
             "first_review_at": _ts(record.milestones.first_review_at),
+            "first_internal_review_at": _ts(record.milestones.first_internal_review_at),
+            "first_external_review_at": _ts(record.milestones.first_external_review_at),
             "first_changes_requested_at": _ts(record.milestones.first_changes_requested_at),
             "internal_approved_at": _ts(record.milestones.internal_approved_at),
             "external_approved_at": _ts(record.milestones.external_approved_at),
             "other_approved_at": _ts(record.milestones.other_approved_at),
+            "approval_path": record.milestones.approval_path,
             "merged_at": _ts(record.milestones.merged_at),
             "closed_at": _ts(record.milestones.closed_at),
         },
@@ -187,8 +190,13 @@ def record_to_dict(record: PRRecord) -> dict:
             "hours_draft_total": record.metrics.hours_draft_total,
             "hours_created_to_ready": record.metrics.hours_created_to_ready,
             "ready_hours_to_first_review": record.metrics.ready_hours_to_first_review,
+            "ready_hours_to_internal_review": record.metrics.ready_hours_to_internal_review,
+            "ready_hours_to_external_review": record.metrics.ready_hours_to_external_review,
             "ready_hours_to_internal_approval": record.metrics.ready_hours_to_internal_approval,
             "ready_hours_to_external_approval": record.metrics.ready_hours_to_external_approval,
+            "ready_hours_internal_to_external_approval": (
+                record.metrics.ready_hours_internal_to_external_approval
+            ),
             "wall_hours_to_merge": record.metrics.wall_hours_to_merge,
             "changes_requested_count": record.metrics.changes_requested_count,
             "review_rounds": record.metrics.review_rounds,
@@ -264,6 +272,14 @@ def record_from_dict(payload: dict, source: str = "<record>") -> PRRecord:
             first_review_at=_opt_dt(
                 milestones_raw.get("first_review_at"), f"{source}.milestones.first_review_at"
             ),
+            first_internal_review_at=_opt_dt(
+                milestones_raw.get("first_internal_review_at"),
+                f"{source}.milestones.first_internal_review_at",
+            ),
+            first_external_review_at=_opt_dt(
+                milestones_raw.get("first_external_review_at"),
+                f"{source}.milestones.first_external_review_at",
+            ),
             first_changes_requested_at=_opt_dt(
                 milestones_raw.get("first_changes_requested_at"),
                 f"{source}.milestones.first_changes_requested_at",
@@ -279,6 +295,9 @@ def record_from_dict(payload: dict, source: str = "<record>") -> PRRecord:
             other_approved_at=_opt_dt(
                 milestones_raw.get("other_approved_at"), f"{source}.milestones.other_approved_at"
             ),
+            # Records written before approval_path existed default to "none"; `verify` will
+            # recompute the real value from the stored events, no re-fetch needed.
+            approval_path=milestones_raw.get("approval_path") or "none",
             merged_at=_opt_dt(milestones_raw.get("merged_at"), f"{source}.milestones.merged_at"),
             closed_at=_opt_dt(milestones_raw.get("closed_at"), f"{source}.milestones.closed_at"),
         ),
@@ -286,8 +305,13 @@ def record_from_dict(payload: dict, source: str = "<record>") -> PRRecord:
             hours_draft_total=metrics_raw.get("hours_draft_total"),
             hours_created_to_ready=metrics_raw.get("hours_created_to_ready"),
             ready_hours_to_first_review=metrics_raw.get("ready_hours_to_first_review"),
+            ready_hours_to_internal_review=metrics_raw.get("ready_hours_to_internal_review"),
+            ready_hours_to_external_review=metrics_raw.get("ready_hours_to_external_review"),
             ready_hours_to_internal_approval=metrics_raw.get("ready_hours_to_internal_approval"),
             ready_hours_to_external_approval=metrics_raw.get("ready_hours_to_external_approval"),
+            ready_hours_internal_to_external_approval=metrics_raw.get(
+                "ready_hours_internal_to_external_approval"
+            ),
             wall_hours_to_merge=metrics_raw.get("wall_hours_to_merge"),
             changes_requested_count=int(metrics_raw.get("changes_requested_count") or 0),
             review_rounds=int(metrics_raw.get("review_rounds") or 0),
