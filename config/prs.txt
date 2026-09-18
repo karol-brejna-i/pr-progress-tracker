@@ -1,7 +1,9 @@
-# Watchlist: one full PR URL per line.
 # Blank lines and lines starting with # are ignored.
 # Removing a line does not delete its data — the record is marked in_watchlist: false.
+# Watchlist: one full PR URL per line.
 
+https://github.com/pytorch/ao/pull/4477
+https://github.com/pytorch/ao/pull/4560
 https://github.com/pytorch/ao/pull/4576
 https://github.com/pytorch/ao/pull/4628
 https://github.com/pytorch/ao/pull/4629
@@ -9,3 +11,6 @@ https://github.com/pytorch/ao/pull/4630
 https://github.com/pytorch/ao/pull/4636
 https://github.com/pytorch/ao/pull/4637
 https://github.com/pytorch/ao/pull/4660
+https://github.com/pytorch/ao/pull/4731
+https://github.com/pytorch/ao/pull/4843
+https://github.com/pytorch/ao/pull/4844
