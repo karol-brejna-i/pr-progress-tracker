@@ -1,0 +1,213 @@
+{
+  "author": "xiaowangintel",
+  "base_ref": "main",
+  "events": [
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-08-28T12:00:46Z",
+      "id": "created:PR_kwDOKo_lrs8AAAABBVZD5w",
+      "type": "created"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-08-28T12:00:47Z",
+      "id": "RRE_lADOKo_lrs8AAAABOpe2Bs8AAAAHBd-fFw",
+      "type": "review_requested"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-08-28T12:00:47Z",
+      "id": "RRE_lADOKo_lrs8AAAABOpe2Bs8AAAAHBd-fVg",
+      "type": "review_requested"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-08-28T12:00:47Z",
+      "id": "RRE_lADOKo_lrs8AAAABOpe2Bs8AAAAHBd-fhQ",
+      "type": "review_requested"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-08-28T12:00:47Z",
+      "id": "RRE_lADOKo_lrs8AAAABOpe2Bs8AAAAHBd-fvw",
+      "type": "review_requested"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-08-28T12:18:21Z",
+      "id": "RRE_lADOKo_lrs8AAAABOpe2Bs8AAAAHBerqrw",
+      "type": "review_requested"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-08-28T12:43:17Z",
+      "id": "PRR_kwDOKo_lrs8AAAABLRKLkg",
+      "review_state": "APPROVED",
+      "type": "review"
+    },
+    {
+      "actor": "vkuzo",
+      "at": "2026-08-28T12:47:29Z",
+      "id": "PRR_kwDOKo_lrs8AAAABLRMB3A",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "vkuzo",
+      "at": "2026-08-28T12:49:03Z",
+      "id": "PRR_kwDOKo_lrs8AAAABLRMsYw",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "vkuzo",
+      "at": "2026-08-28T12:49:59Z",
+      "id": "PRR_kwDOKo_lrs8AAAABLRNK1w",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "vkuzo",
+      "at": "2026-08-28T14:26:07Z",
+      "id": "PRR_kwDOKo_lrs8AAAABLR9-Bw",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "vkuzo",
+      "at": "2026-08-28T15:19:17Z",
+      "id": "PRR_kwDOKo_lrs8AAAABLSaPlA",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-08-29T03:42:10Z",
+      "id": "RRE_lADOKo_lrs8AAAABOpe2Bs8AAAAHB__b_A",
+      "type": "review_requested"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-08-31T08:03:49Z",
+      "id": "RRE_lADOKo_lrs8AAAABOpe2Bs8AAAAHC_XT-Q",
+      "type": "review_requested"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-09-01T00:16:07Z",
+      "id": "PRR_kwDOKo_lrs8AAAABLlu6zw",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-09-01T00:25:59Z",
+      "id": "PRR_kwDOKo_lrs8AAAABLlxqHg",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-09-01T02:34:38Z",
+      "id": "PRR_kwDOKo_lrs8AAAABLmZYXw",
+      "review_state": "APPROVED",
+      "type": "review"
+    },
+    {
+      "actor": "vkuzo",
+      "at": "2026-09-01T09:58:07Z",
+      "id": "PRR_kwDOKo_lrs8AAAABLpdguA",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-09-01T12:42:24Z",
+      "id": "PRR_kwDOKo_lrs8AAAABLq5Bjg",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "vkuzo",
+      "at": "2026-09-01T12:52:44Z",
+      "id": "PRR_kwDOKo_lrs8AAAABLq_IGg",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-09-01T13:36:36Z",
+      "id": "RRE_lADOKo_lrs8AAAABOpe2Bs8AAAAHEPOCQw",
+      "type": "review_requested"
+    },
+    {
+      "actor": "vkuzo",
+      "at": "2026-09-09T10:56:23Z",
+      "id": "PRR_kwDOKo_lrs8AAAABMykc-g",
+      "review_state": "APPROVED",
+      "type": "review"
+    },
+    {
+      "actor": "vkuzo",
+      "at": "2026-09-09T10:56:34Z",
+      "id": "CE_lADOKo_lrs8AAAABOpe2Bs8AAAAHLSxdOQ",
+      "type": "closed"
+    },
+    {
+      "actor": "vkuzo",
+      "at": "2026-09-09T10:56:34Z",
+      "id": "ME_lADOKo_lrs8AAAABOpe2Bs8AAAAHLSxcyQ",
+      "type": "merged"
+    }
+  ],
+  "history_runs": 1,
+  "in_watchlist": true,
+  "key": "pytorch/ao#4844",
+  "last_error": null,
+  "metrics": {
+    "changes_requested_count": 0,
+    "distinct_reviewers": 2,
+    "hours_created_to_ready": 0.0,
+    "hours_draft_total": 0.0,
+    "open_hours": 286.93,
+    "ready_hours_internal_to_external_approval": 286.22,
+    "ready_hours_to_external_approval": 286.93,
+    "ready_hours_to_external_review": 0.78,
+    "ready_hours_to_first_review": 0.71,
+    "ready_hours_to_internal_approval": 0.71,
+    "ready_hours_to_internal_review": 0.71,
+    "review_rounds": 3,
+    "wall_hours_to_merge": 286.93
+  },
+  "milestones": {
+    "approval_path": "internal_first",
+    "closed_at": null,
+    "created_at": "2026-08-28T12:00:46Z",
+    "draft_at_creation": false,
+    "draft_intervals": [],
+    "external_approved_at": "2026-09-09T10:56:23Z",
+    "first_changes_requested_at": null,
+    "first_external_review_at": "2026-08-28T12:47:29Z",
+    "first_internal_review_at": "2026-08-28T12:43:17Z",
+    "first_review_at": "2026-08-28T12:43:17Z",
+    "internal_approved_at": "2026-08-28T12:43:17Z",
+    "merged_at": "2026-09-09T10:56:34Z",
+    "other_approved_at": null,
+    "ready_at": "2026-08-28T12:00:46Z"
+  },
+  "number": 4844,
+  "owner": "pytorch",
+  "repo": "ao",
+  "schema_version": 1,
+  "snapshot": {
+    "additions": 284,
+    "changed_files": 6,
+    "deletions": 146,
+    "fetched_at": "2026-09-18T09:00:54Z",
+    "is_draft": false,
+    "state": "MERGED"
+  },
+  "title": "Refactor MXTensor: align the swizzle execution with the configured swizzle setting",
+  "tracking": "final",
+  "url": "https://github.com/pytorch/ao/pull/4844"
+}
