@@ -1,0 +1,218 @@
+{
+  "author": "xiaowangintel",
+  "base_ref": "main",
+  "events": [
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-06-12T06:26:12Z",
+      "id": "created:PR_kwDOKo_lrs7lovX8",
+      "type": "created"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-06-12T06:26:13Z",
+      "id": "RRE_lADOKo_lrs8AAAABFPokvc8AAAAGNR-tLw",
+      "type": "review_requested"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-06-12T06:26:13Z",
+      "id": "RRE_lADOKo_lrs8AAAABFPokvc8AAAAGNR-taA",
+      "type": "review_requested"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-06-12T06:26:13Z",
+      "id": "RRE_lADOKo_lrs8AAAABFPokvc8AAAAGNR-tkA",
+      "type": "review_requested"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-06-12T06:26:13Z",
+      "id": "RRE_lADOKo_lrs8AAAABFPokvc8AAAAGNR-twQ",
+      "type": "review_requested"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-06-25T02:51:21Z",
+      "id": "CTDE_lADOKo_lrs8AAAABFPokvc8AAAAGU8S35A",
+      "type": "convert_to_draft"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-09-10T07:40:18Z",
+      "id": "RFRE_lADOKo_lrs8AAAABFPokvc8AAAAHMN1qDQ",
+      "type": "ready_for_review"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-09-10T07:40:19Z",
+      "id": "RRE_lADOKo_lrs8AAAABFPokvc8AAAAHMN1r7A",
+      "type": "review_requested"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-09-10T07:45:54Z",
+      "id": "PRR_kwDOKo_lrs8AAAABM891UA",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-09-10T07:46:07Z",
+      "id": "PRR_kwDOKo_lrs8AAAABM89_oQ",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-09-10T07:46:19Z",
+      "id": "PRR_kwDOKo_lrs8AAAABM8-IxQ",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-09-10T07:46:49Z",
+      "id": "PRR_kwDOKo_lrs8AAAABM8-gZg",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-09-10T07:47:00Z",
+      "id": "PRR_kwDOKo_lrs8AAAABM8-pBA",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-09-10T07:47:25Z",
+      "id": "PRR_kwDOKo_lrs8AAAABM8-7iw",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-09-10T07:47:35Z",
+      "id": "PRR_kwDOKo_lrs8AAAABM8_Dow",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-09-10T07:50:17Z",
+      "id": "PRR_kwDOKo_lrs8AAAABM9A_Ww",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-09-10T07:51:15Z",
+      "id": "PRR_kwDOKo_lrs8AAAABM9Bq1A",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-09-10T07:51:35Z",
+      "id": "PRR_kwDOKo_lrs8AAAABM9B5Jw",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-09-10T08:57:21Z",
+      "id": "RRE_lADOKo_lrs8AAAABFPokvc8AAAAHMSg_iA",
+      "type": "review_requested"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-09-10T10:09:50Z",
+      "id": "PRR_kwDOKo_lrs8AAAABM-bwBw",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-09-10T13:36:45Z",
+      "id": "RRE_lADOKo_lrs8AAAABFPokvc8AAAAHMh789A",
+      "type": "review_requested"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-09-11T00:42:03Z",
+      "id": "PRR_kwDOKo_lrs8AAAABNGHCPg",
+      "review_state": "APPROVED",
+      "type": "review"
+    },
+    {
+      "actor": "vkuzo",
+      "at": "2026-09-11T14:00:53Z",
+      "id": "PRR_kwDOKo_lrs8AAAABNLjYBA",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "xiaowangintel",
+      "at": "2026-09-11T14:44:13Z",
+      "id": "RRE_lADOKo_lrs8AAAABFPokvc8AAAAHNoGUjg",
+      "type": "review_requested"
+    }
+  ],
+  "history_runs": 20,
+  "in_watchlist": true,
+  "key": "pytorch/ao#4477",
+  "last_error": null,
+  "metrics": {
+    "changes_requested_count": 0,
+    "distinct_reviewers": 2,
+    "hours_created_to_ready": 0.0,
+    "hours_draft_total": 1852.82,
+    "open_hours": 2446.41,
+    "ready_hours_internal_to_external_approval": null,
+    "ready_hours_to_external_approval": null,
+    "ready_hours_to_external_review": 338.76,
+    "ready_hours_to_first_review": 308.51,
+    "ready_hours_to_internal_approval": 325.45,
+    "ready_hours_to_internal_review": 308.51,
+    "review_rounds": 1,
+    "wall_hours_to_merge": null
+  },
+  "milestones": {
+    "approval_path": "internal_only",
+    "closed_at": null,
+    "created_at": "2026-06-12T06:26:12Z",
+    "draft_at_creation": false,
+    "draft_intervals": [
+      [
+        "2026-06-25T02:51:21Z",
+        "2026-09-10T07:40:18Z"
+      ]
+    ],
+    "external_approved_at": null,
+    "first_changes_requested_at": null,
+    "first_external_review_at": "2026-09-11T14:00:53Z",
+    "first_internal_review_at": "2026-09-10T07:45:54Z",
+    "first_review_at": "2026-09-10T07:45:54Z",
+    "internal_approved_at": "2026-09-11T00:42:03Z",
+    "merged_at": null,
+    "other_approved_at": null,
+    "ready_at": "2026-06-12T06:26:12Z"
+  },
+  "number": 4477,
+  "owner": "pytorch",
+  "repo": "ao",
+  "schema_version": 1,
+  "snapshot": {
+    "additions": 174,
+    "changed_files": 4,
+    "deletions": 77,
+    "fetched_at": "2026-09-22T04:50:31Z",
+    "is_draft": false,
+    "state": "OPEN"
+  },
+  "title": " Refactor NVFP4Tensor: align the swizzle execution with the configured swizzle setting",
+  "tracking": "active",
+  "url": "https://github.com/pytorch/ao/pull/4477"
+}

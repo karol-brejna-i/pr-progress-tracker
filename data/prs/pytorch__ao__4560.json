@@ -1,0 +1,88 @@
+{
+  "author": "draghan",
+  "base_ref": "main",
+  "events": [
+    {
+      "actor": "draghan",
+      "at": "2026-07-07T15:33:29Z",
+      "id": "created:PR_kwDOKo_lrs7u5XgS",
+      "type": "created"
+    },
+    {
+      "actor": "vkuzo",
+      "at": "2026-07-07T16:36:14Z",
+      "id": "PRR_kwDOKo_lrs8AAAABFP0sog",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-07-09T05:35:15Z",
+      "id": "PRR_kwDOKo_lrs8AAAABFcOXZw",
+      "review_state": "COMMENTED",
+      "type": "review"
+    },
+    {
+      "actor": "liangan1",
+      "at": "2026-08-05T01:48:14Z",
+      "id": "PRR_kwDOKo_lrs8AAAABIbKy8w",
+      "review_state": "APPROVED",
+      "type": "review"
+    }
+  ],
+  "history_runs": 20,
+  "in_watchlist": true,
+  "key": "pytorch/ao#4560",
+  "last_error": null,
+  "metrics": {
+    "changes_requested_count": 0,
+    "distinct_reviewers": 2,
+    "hours_created_to_ready": null,
+    "hours_draft_total": 1837.28,
+    "open_hours": 1837.28,
+    "ready_hours_internal_to_external_approval": null,
+    "ready_hours_to_external_approval": null,
+    "ready_hours_to_external_review": null,
+    "ready_hours_to_first_review": null,
+    "ready_hours_to_internal_approval": null,
+    "ready_hours_to_internal_review": null,
+    "review_rounds": 1,
+    "wall_hours_to_merge": null
+  },
+  "milestones": {
+    "approval_path": "internal_only",
+    "closed_at": null,
+    "created_at": "2026-07-07T15:33:29Z",
+    "draft_at_creation": true,
+    "draft_intervals": [
+      [
+        "2026-07-07T15:33:29Z",
+        null
+      ]
+    ],
+    "external_approved_at": null,
+    "first_changes_requested_at": null,
+    "first_external_review_at": "2026-07-07T16:36:14Z",
+    "first_internal_review_at": "2026-07-09T05:35:15Z",
+    "first_review_at": "2026-07-07T16:36:14Z",
+    "internal_approved_at": "2026-08-05T01:48:14Z",
+    "merged_at": null,
+    "other_approved_at": null,
+    "ready_at": null
+  },
+  "number": 4560,
+  "owner": "pytorch",
+  "repo": "ao",
+  "schema_version": 1,
+  "snapshot": {
+    "additions": 261,
+    "changed_files": 2,
+    "deletions": 0,
+    "fetched_at": "2026-09-22T04:50:31Z",
+    "is_draft": true,
+    "state": "OPEN"
+  },
+  "title": "Implement `cat`, `transpose`, `mm` and `addmm` ops in Int8Tensor",
+  "tracking": "active",
+  "url": "https://github.com/pytorch/ao/pull/4560"
+}
