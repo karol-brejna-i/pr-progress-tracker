@@ -47,7 +47,7 @@
       "type": "review"
     }
   ],
-  "history_runs": 4,
+  "history_runs": 5,
   "in_watchlist": true,
   "key": "pytorch/ao#4660",
   "last_error": null,
@@ -56,7 +56,7 @@
     "distinct_reviewers": 1,
     "hours_created_to_ready": 17.46,
     "hours_draft_total": 17.46,
-    "open_hours": 1192.0,
+    "open_hours": 1194.14,
     "ready_hours_internal_to_external_approval": null,
     "ready_hours_to_external_approval": null,
     "ready_hours_to_external_review": null,
@@ -95,7 +95,7 @@
     "additions": 2,
     "changed_files": 1,
     "deletions": 2,
-    "fetched_at": "2026-09-18T09:00:54Z",
+    "fetched_at": "2026-09-18T11:09:35Z",
     "is_draft": false,
     "state": "OPEN"
   },
