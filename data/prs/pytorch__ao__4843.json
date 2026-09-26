@@ -45,7 +45,7 @@
       "type": "convert_to_draft"
     }
   ],
-  "history_runs": 36,
+  "history_runs": 37,
   "in_watchlist": true,
   "key": "pytorch/ao#4843",
   "last_error": null,
@@ -53,8 +53,8 @@
     "changes_requested_count": 0,
     "distinct_reviewers": 0,
     "hours_created_to_ready": 0.0,
-    "hours_draft_total": 682.85,
-    "open_hours": 690.8,
+    "hours_draft_total": 690.2,
+    "open_hours": 698.15,
     "ready_hours_internal_to_external_approval": null,
     "ready_hours_to_external_approval": null,
     "ready_hours_to_external_review": null,
@@ -93,7 +93,7 @@
     "additions": 258,
     "changed_files": 13,
     "deletions": 60,
-    "fetched_at": "2026-09-25T21:32:08Z",
+    "fetched_at": "2026-09-26T04:53:07Z",
     "is_draft": true,
     "state": "OPEN"
   },
