@@ -28,24 +28,42 @@
       "id": "PRR_kwDOKo_lrs8AAAABIbKy8w",
       "review_state": "APPROVED",
       "type": "review"
+    },
+    {
+      "actor": "draghan",
+      "at": "2026-10-08T07:59:42Z",
+      "id": "RFRE_lADOKo_lrs8AAAABH-ObHs8AAAAHoNnreA",
+      "type": "ready_for_review"
+    },
+    {
+      "actor": "draghan",
+      "at": "2026-10-08T07:59:44Z",
+      "id": "RRE_lADOKo_lrs8AAAABH-ObHs8AAAAHoNnwGg",
+      "type": "review_requested"
+    },
+    {
+      "actor": "draghan",
+      "at": "2026-10-08T07:59:44Z",
+      "id": "RRE_lADOKo_lrs8AAAABH-ObHs8AAAAHoNnwuQ",
+      "type": "review_requested"
     }
   ],
-  "history_runs": 81,
+  "history_runs": 82,
   "in_watchlist": true,
   "key": "pytorch/ao#4560",
   "last_error": null,
   "metrics": {
     "changes_requested_count": 0,
     "distinct_reviewers": 2,
-    "hours_created_to_ready": null,
-    "hours_draft_total": 2217.42,
-    "open_hours": 2217.42,
+    "hours_created_to_ready": 2224.44,
+    "hours_draft_total": 2224.44,
+    "open_hours": 2226.94,
     "ready_hours_internal_to_external_approval": null,
     "ready_hours_to_external_approval": null,
-    "ready_hours_to_external_review": null,
-    "ready_hours_to_first_review": null,
-    "ready_hours_to_internal_approval": null,
-    "ready_hours_to_internal_review": null,
+    "ready_hours_to_external_review": 0.0,
+    "ready_hours_to_first_review": 0.0,
+    "ready_hours_to_internal_approval": 0.0,
+    "ready_hours_to_internal_review": 0.0,
     "review_rounds": 1,
     "wall_hours_to_merge": null
   },
@@ -57,7 +75,7 @@
     "draft_intervals": [
       [
         "2026-07-07T15:33:29Z",
-        null
+        "2026-10-08T07:59:42Z"
       ]
     ],
     "external_approved_at": null,
@@ -68,7 +86,7 @@
     "internal_approved_at": "2026-08-05T01:48:14Z",
     "merged_at": null,
     "other_approved_at": null,
-    "ready_at": null
+    "ready_at": "2026-10-08T07:59:42Z"
   },
   "number": 4560,
   "owner": "pytorch",
@@ -78,8 +96,8 @@
     "additions": 261,
     "changed_files": 2,
     "deletions": 0,
-    "fetched_at": "2026-10-08T00:58:23Z",
-    "is_draft": true,
+    "fetched_at": "2026-10-08T10:29:37Z",
+    "is_draft": false,
     "state": "OPEN"
   },
   "title": "Implement `cat`, `transpose`, `mm` and `addmm` ops in Int8Tensor",
