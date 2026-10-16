@@ -1,6 +1,6 @@
 # PR progress
 
-Generated 2026-10-16T04:26:08Z · 12 tracked PRs · 10 open (2 draft) · 1 merged · 1 closed
+Generated 2026-10-16T11:17:30Z · 12 tracked PRs · 10 open (2 draft) · 1 merged · 1 closed
 
 ## Aggregates
 
@@ -18,7 +18,7 @@ of the tracked PRs that is.
 | Ready → external approval | 1 | 11d 23h | 11d 23h | 11d 23h |
 | Internal → external approval (handoff) | 1 | 11d 22h | 11d 22h | 11d 22h |
 | Created → merge (wall) | 1 | 11d 23h | 11d 23h | 11d 23h |
-| Open duration | 12 | 79d 4h | 99d 16h | 125d 22h |
+| Open duration | 12 | 79d 10h | 99d 23h | 126d 5h |
 
 ## Review pipeline
 
@@ -38,17 +38,17 @@ external repo maintainers. This is how often that order actually held.
 | PR | Author | State | Draft | → Ready | → 1st review | → Internal ✅ | → External ✅ | Handoff | Other ✅ | → Merge | CR | Rounds | Reviewers |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | [pytorch/ao#4844](https://github.com/pytorch/ao/pull/4844) | xiaowangintel | MERGED | 0m | 0m | 43m | 43m | 11d 23h | 11d 22h | — | 11d 23h | 0 | 3 | 2 |
-| [pytorch/ao#4843](https://github.com/pytorch/ao/pull/4843) | xiaowangintel | OPEN (draft) | ⏳ 48d 18h | 0m | ⏳ 8.0h | ⏳ 8.0h | ⏳ 8.0h | — | — | ⏳ 49d 2h | 0 | 0 | 0 |
+| [pytorch/ao#4843](https://github.com/pytorch/ao/pull/4843) | xiaowangintel | OPEN (draft) | ⏳ 49d 1h | 0m | ⏳ 8.0h | ⏳ 8.0h | ⏳ 8.0h | — | — | ⏳ 49d 9h | 0 | 0 | 0 |
 | [pytorch/ao#4731](https://github.com/pytorch/ao/pull/4731) | eryk-roch | CLOSED (draft) | ⏳ 36d 11h | 0m | — | — | — | — | — | — | 0 | 0 | 0 |
-| [pytorch/ao#4660](https://github.com/pytorch/ao/pull/4660) | karol-brejna-i | OPEN | 17.5h | 17.5h | 3d 21h | ⏳ 76d 18h | ⏳ 76d 18h | — | — | ⏳ 77d 11h | 0 | 0 | 1 |
-| [pytorch/ao#4637](https://github.com/pytorch/ao/pull/4637) | karol-brejna-i | OPEN | 11.4h | 0m | 5d 12h | ⏳ 78d 10h | ⏳ 78d 10h | — | — | ⏳ 78d 21h | 0 | 0 | 1 |
-| [pytorch/ao#4636](https://github.com/pytorch/ao/pull/4636) | karol-brejna-i | OPEN | 10.8h | 0m | 5d 13h | ⏳ 78d 10h | ⏳ 78d 10h | — | — | ⏳ 78d 21h | 0 | 0 | 1 |
-| [pytorch/ao#4630](https://github.com/pytorch/ao/pull/4630) | karol-brejna-i | OPEN | 5d 17h | 5d 17h | 19.0h | ⏳ 73d 17h | ⏳ 73d 17h | — | — | ⏳ 79d 10h | 0 | 0 | 1 |
-| [pytorch/ao#4629](https://github.com/pytorch/ao/pull/4629) | karol-brejna-i | OPEN | 5d 18h | 5d 18h | 19.0h | 37d 22h | ⏳ 73d 17h | ⏳ 35d 18h | — | ⏳ 79d 11h | 0 | 2 | 3 |
-| [pytorch/ao#4628](https://github.com/pytorch/ao/pull/4628) | karol-brejna-i | OPEN | 5d 18h | 5d 18h | 18.9h | ⏳ 73d 17h | ⏳ 73d 17h | — | — | ⏳ 79d 11h | 0 | 0 | 1 |
-| [pytorch/ao#4576](https://github.com/pytorch/ao/pull/4576) | karol-brejna-i | OPEN | 13.0h | 13.0h | ⏳ 91d 8h | ⏳ 91d 8h | ⏳ 91d 8h | — | — | ⏳ 91d 22h | 0 | 0 | 0 |
-| [pytorch/ao#4560](https://github.com/pytorch/ao/pull/4560) | draghan | OPEN | 92d 16h | 92d 16h | 0m | 0m | ⏳ 7d 20h | ⏳ 7d 20h | — | ⏳ 100d 13h | 0 | 1 | 2 |
-| [pytorch/ao#4477](https://github.com/pytorch/ao/pull/4477) | xiaowangintel | OPEN | 77d 5h | 0m | 12d 21h | 13d 13h | ⏳ 48d 17h | ⏳ 35d 4h | — | ⏳ 125d 22h | 0 | 1 | 2 |
+| [pytorch/ao#4660](https://github.com/pytorch/ao/pull/4660) | karol-brejna-i | OPEN | 17.5h | 17.5h | 3d 21h | ⏳ 77d 1h | ⏳ 77d 1h | — | — | ⏳ 77d 18h | 0 | 0 | 1 |
+| [pytorch/ao#4637](https://github.com/pytorch/ao/pull/4637) | karol-brejna-i | OPEN | 11.4h | 0m | 5d 12h | ⏳ 78d 16h | ⏳ 78d 16h | — | — | ⏳ 79d 4h | 0 | 0 | 1 |
+| [pytorch/ao#4636](https://github.com/pytorch/ao/pull/4636) | karol-brejna-i | OPEN | 10.8h | 0m | 5d 13h | ⏳ 78d 17h | ⏳ 78d 17h | — | — | ⏳ 79d 4h | 0 | 0 | 1 |
+| [pytorch/ao#4630](https://github.com/pytorch/ao/pull/4630) | karol-brejna-i | OPEN | 5d 17h | 5d 17h | 19.0h | ⏳ 73d 23h | ⏳ 73d 23h | — | — | ⏳ 79d 17h | 0 | 0 | 1 |
+| [pytorch/ao#4629](https://github.com/pytorch/ao/pull/4629) | karol-brejna-i | OPEN | 5d 18h | 5d 18h | 19.0h | 37d 22h | ⏳ 73d 23h | ⏳ 36d 1h | — | ⏳ 79d 18h | 0 | 2 | 3 |
+| [pytorch/ao#4628](https://github.com/pytorch/ao/pull/4628) | karol-brejna-i | OPEN | 5d 18h | 5d 18h | 18.9h | ⏳ 73d 23h | ⏳ 73d 23h | — | — | ⏳ 79d 18h | 0 | 0 | 1 |
+| [pytorch/ao#4576](https://github.com/pytorch/ao/pull/4576) | karol-brejna-i | OPEN | 13.0h | 13.0h | ⏳ 91d 15h | ⏳ 91d 15h | ⏳ 91d 15h | — | — | ⏳ 92d 4h | 0 | 0 | 0 |
+| [pytorch/ao#4560](https://github.com/pytorch/ao/pull/4560) | draghan | OPEN | 92d 16h | 92d 16h | 0m | 0m | ⏳ 8d 3h | ⏳ 8d 3h | — | ⏳ 100d 20h | 0 | 1 | 2 |
+| [pytorch/ao#4477](https://github.com/pytorch/ao/pull/4477) | xiaowangintel | OPEN | 77d 5h | 0m | 12d 21h | 13d 13h | ⏳ 49d | ⏳ 35d 11h | — | ⏳ 126d 5h | 0 | 1 | 2 |
 
 `—` = milestone not reached · `⏳` = still in flight · durations are ready hours (draft time excluded) except `→ Merge`, which is wall clock.
 
@@ -58,10 +58,10 @@ external repo maintainers. This is how often that order actually held.
 
 ### Ready > 48h with no review
 
-- [pytorch/ao#4576](https://github.com/pytorch/ao/pull/4576) — ready 91d 8h, no review yet
+- [pytorch/ao#4576](https://github.com/pytorch/ao/pull/4576) — ready 91d 15h, no review yet
 
 ### Internally approved > 48h, waiting on a maintainer
 
-- [pytorch/ao#4629](https://github.com/pytorch/ao/pull/4629) — internally approved 35d 18h ago, no maintainer approval
-- [pytorch/ao#4560](https://github.com/pytorch/ao/pull/4560) — internally approved 7d 20h ago, no maintainer approval
-- [pytorch/ao#4477](https://github.com/pytorch/ao/pull/4477) — internally approved 35d 4h ago, no maintainer approval
+- [pytorch/ao#4629](https://github.com/pytorch/ao/pull/4629) — internally approved 36d 1h ago, no maintainer approval
+- [pytorch/ao#4560](https://github.com/pytorch/ao/pull/4560) — internally approved 8d 3h ago, no maintainer approval
+- [pytorch/ao#4477](https://github.com/pytorch/ao/pull/4477) — internally approved 35d 11h ago, no maintainer approval
